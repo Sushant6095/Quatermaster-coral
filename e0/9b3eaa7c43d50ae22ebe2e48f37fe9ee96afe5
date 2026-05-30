@@ -1,0 +1,38 @@
+src/app/robots.ts
+  s_b5d5225ea8edd1::t_e708884f454c11 1-15
+src/app/page.tsx
+  s_b5d5225ea8edd1::t_18268979051786 7-19,24-28
+src/app/opengraph-image.tsx
+  s_b5d5225ea8edd1::t_fba10b4cd67e40 1-85
+next.config.mjs
+  s_b5d5225ea8edd1::t_f2030f29f0be05 5-7
+src/app/icon.svg
+  s_b5d5225ea8edd1::t_b2a9db19f4b527 1-9
+src/components/layout/TopBar.tsx
+  s_b5d5225ea8edd1::t_a08e9a49337f05 6
+  s_b5d5225ea8edd1::t_8d3035ba631804 141-142
+src/app/layout.tsx
+  s_b5d5225ea8edd1::t_90c4f056d50956 1,7-9,12-64
+src/app/sitemap.ts
+  s_b5d5225ea8edd1::t_779b3f382fa8f1 1-17
+src/components/layout/ProfileMenu.tsx
+  s_b5d5225ea8edd1::t_e54a855d445c7c 1-185
+src/lib/seo.ts
+  s_b5d5225ea8edd1::t_6580128c4ef809 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "e09b3eaa7c43d50ae22ebe2e48f37fe9ee96afe5",
+  "prompts": {},
+  "sessions": {
+    "s_b5d5225ea8edd1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0506d888-c5e7-41a5-9fd9-cefc9d660e80",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Sushant Jain <sushant.jain@vyapar.com>"
+    }
+  }
+}
