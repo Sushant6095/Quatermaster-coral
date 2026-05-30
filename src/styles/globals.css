@@ -7,19 +7,19 @@
    ============================================================ */
 
 @theme {
-  /* Surfaces */
-  --color-bg: #070E1A;
-  --color-surface: #0F1A2E;
-  --color-card: #13213A;
-  --color-card-hover: #182943;
-  --color-border: #22324F;
-  --color-border-strong: #2E4366;
-  --color-code-bg: #0E1626;
+  /* Surfaces — Vercel-neutral black/zinc */
+  --color-bg: #000000;
+  --color-surface: #0A0A0A;
+  --color-card: #0E0E0E;
+  --color-card-hover: #1A1A1A;
+  --color-border: #262626;
+  --color-border-strong: #383838;
+  --color-code-bg: #0A0A0A;
 
-  /* Text */
-  --color-text: #E8EEF7;
-  --color-text-muted: #9AA7BD;
-  --color-text-dim: #5C6B85;
+  /* Text — Vercel grays */
+  --color-text: #EDEDED;
+  --color-text-muted: #A1A1A1;
+  --color-text-dim: #6E6E6E;
 
   /* Brand accents */
   --color-gold: #E4B66B;

@@ -28,6 +28,7 @@ function ShipFallback() {
 const SOURCE_LOGOS = ["deel", "okta", "github", "slack", "stripe", "linear"];
 
 const NAV_LINKS = [
+  { label: "Docs", href: "/docs" },
   { label: "Audits", href: "/audits" },
   { label: "Copilot", href: "/copilot" },
   { label: "Schema", href: "/schema" },

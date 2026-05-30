@@ -20,7 +20,7 @@ const NAV_COLUMNS: Array<{ heading: string; links: Array<{ label: string; href: 
   {
     heading: "Resources",
     links: [
-      { label: "Documentation", href: REPO_URL, external: true },
+      { label: "Documentation", href: "/docs" },
       { label: "Ledger", href: "/ledger" },
       { label: "Playground", href: "/playground" },
       { label: "Sources", href: "/sources" },

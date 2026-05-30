@@ -11,8 +11,8 @@ import { TopBar } from "./TopBar";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // Landing page renders without the left rail / top bar.
-  if (pathname === "/") {
+  // Landing and docs render standalone (their own chrome, no dashboard rail).
+  if (pathname === "/" || pathname === "/docs" || pathname?.startsWith("/docs/")) {
     return <>{children}</>;
   }
 
