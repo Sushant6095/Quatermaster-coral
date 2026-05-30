@@ -1,11 +1,12 @@
 "use client";
 
 /**
- * /cockpit — the Risk Cockpit hero screen.
+ * /cockpit — the Risk Cockpit "Overview" screen.
  *
- * Header chrome + KPI row + active-audit grid + (optional) live feed.
- * Client component so the Continuous-Mode toggle and the simulated
- * Live Feed can hold local state without a server round-trip.
+ * Vercel Overview composition: a narrow left rail (Posture metrics →
+ * Continuous Mode alerts → Recent runs) beside a wide right column
+ * (active-audit grid + live feed). Client component so Continuous Mode
+ * and the simulated Live Feed hold local state without a round-trip.
  */
 
 import { useEffect, useState } from "react";
@@ -19,16 +20,17 @@ import {
   PlayCircle,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { StatCard } from "@/components/cockpit/StatCard";
 import { AuditTile } from "@/components/cockpit/AuditTile";
 import { LiveFeed } from "@/components/cockpit/LiveFeed";
+import { PosturePanel } from "@/components/cockpit/PosturePanel";
+import { AlertsPanel } from "@/components/cockpit/AlertsPanel";
+import { RecentRuns } from "@/components/cockpit/RecentRuns";
 import {
   mockAudits,
   mockCockpitStats,
   mockLiveFeed,
 } from "@/lib/fixtures/cockpit";
 import type { AuditId, Finding } from "@/lib/types";
-import { cn } from "@/lib/utils/cn";
 
 /** Lucide icon per audit — kept in one place so the grid stays declarative. */
 const AUDIT_ICONS: Record<AuditId, LucideIcon> = {
@@ -42,8 +44,7 @@ const AUDIT_ICONS: Record<AuditId, LucideIcon> = {
 const MAX_FEED_ITEMS = 50;
 
 export default function CockpitPage() {
-  const s = mockCockpitStats;
-  // Continuous Mode toggle — when ON we render the live feed below.
+  const stats = mockCockpitStats;
   const [continuous, setContinuous] = useState<boolean>(true);
   const [liveFeed, setLiveFeed] = useState<Finding[]>(mockLiveFeed);
 
@@ -77,131 +78,88 @@ export default function CockpitPage() {
   }, [continuous]);
 
   return (
-    <div className="mx-auto max-w-[1440px] px-6 py-8">
-      {/* ---------- Page header ---------- */}
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-text)]">
-            Risk Cockpit
+    <div className="mx-auto max-w-[1400px] px-6 py-6">
+      {/* Top row — breadcrumb-style title + global controls */}
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[var(--color-text)]">
+            Cockpit
           </h1>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Real-time view of security posture and access drift
-          </p>
+          <span className="text-[13px] text-[var(--color-text-dim)]">
+            Overview
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setContinuous((v) => !v)}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-md border px-3 py-2 text-[12px] font-medium transition-colors",
-              continuous
-                ? "border-[var(--color-lime)]/40 bg-[var(--color-lime)]/10 text-[var(--color-lime)]"
-                : "border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)]"
-            )}
-            aria-pressed={continuous}
+            className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-transparent px-3 py-1.5 text-[13px] font-medium text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-border-strong)] hover:bg-[var(--color-card)] hover:text-[var(--color-text)]"
           >
-            <span
-              className={cn(
-                "h-1.5 w-1.5 rounded-full",
-                continuous
-                  ? "animate-breath bg-[var(--color-lime)]"
-                  : "bg-[var(--color-text-dim)]"
-              )}
-            />
-            Continuous Mode
+            <RefreshCw className="h-3.5 w-3.5" />
+            Refresh
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-transparent px-3 py-2 text-[13px] font-medium text-[var(--color-text)] transition-colors hover:border-[var(--color-border-strong)] hover:bg-[var(--color-card)]"
+            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-gold)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-bg)] transition-colors hover:bg-[var(--color-gold-hover)]"
           >
-            <RefreshCw className="h-4 w-4" />
-            Refresh now
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-gold)] px-3 py-2 text-[13px] font-semibold text-[var(--color-bg)] transition-colors hover:bg-[var(--color-gold-hover)]"
-          >
-            <PlayCircle className="h-4 w-4" />
-            Run All Audits
+            <PlayCircle className="h-3.5 w-3.5" />
+            Run All
           </button>
         </div>
       </header>
 
-      {/* ---------- KPI row ---------- */}
-      <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          index={0}
-          label="Risk Score"
-          value={String(s.riskScore)}
-          tone="coral"
-          delta={{ dir: "up", pct: `+${s.riskDeltaPct}% wk` }}
-          sublabel="Composite across 5 audits"
-        />
-        <StatCard
-          index={1}
-          label="Zombie Accounts"
-          value={String(s.zombieAccounts)}
-          delta={{ dir: "down", pct: `${s.zombieDelta} today` }}
-          sublabel="Terminated employees with active seats"
-        />
-        <StatCard
-          index={2}
-          label="Ghost Spend / Month"
-          value={`$${s.ghostSpendUsdMonthly.toLocaleString()}`}
-          delta={{ dir: "down", usd: `$${Math.abs(s.ghostSpendDeltaUsd)} wk` }}
-          sublabel="Unused SaaS licenses"
-        />
-        <StatCard
-          index={3}
-          label="Open Findings"
-          value={String(s.openFindings)}
-          tone="gold"
-          sublabel={`${s.openP0} P0 · ${s.openP1} P1`}
-        />
-      </section>
+      {/* Two-column Overview */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[300px_1fr]">
+        {/* Left rail */}
+        <aside className="space-y-4">
+          <PosturePanel stats={stats} />
+          <AlertsPanel
+            continuous={continuous}
+            onToggle={() => setContinuous((v) => !v)}
+          />
+          <RecentRuns audits={mockAudits} />
+        </aside>
 
-      {/* ---------- Active Audits ---------- */}
-      <section className="mt-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[18px] font-semibold tracking-tight text-[var(--color-text)]">
-            Active Audits
-          </h2>
-          <a
-            href="/audits"
-            className="text-[12px] font-medium text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-gold)]"
-          >
-            View all{" "}
-            <span className="ml-0.5 text-[var(--color-gold)]">↗</span>
-          </a>
-        </div>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {mockAudits.map((a, i) => (
-            <AuditTile
-              key={a.id}
-              {...a}
-              icon={AUDIT_ICONS[a.id]}
-              index={i}
-            />
-          ))}
-        </div>
-      </section>
+        {/* Right column */}
+        <div className="min-w-0 space-y-6">
+          <section>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-[13px] font-medium uppercase tracking-[0.8px] text-[var(--color-text-muted)]">
+                Active Audits
+              </h2>
+              <a
+                href="/audits"
+                className="text-[12px] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-gold)]"
+              >
+                View all →
+              </a>
+            </div>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {mockAudits.map((a, i) => (
+                <AuditTile
+                  key={a.id}
+                  {...a}
+                  icon={AUDIT_ICONS[a.id]}
+                  index={i}
+                />
+              ))}
+            </div>
+          </section>
 
-      {/* ---------- Live Feed (only when Continuous Mode is on) ---------- */}
-      {continuous && (
-        <section className="mt-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[18px] font-semibold tracking-tight text-[var(--color-text)]">
-              Live Feed
-            </h2>
-            <span className="font-mono text-[11px] text-[var(--color-text-dim)]">
-              {liveFeed.length} recent
-            </span>
-          </div>
-          <div className="mt-4">
-            <LiveFeed items={liveFeed} isLive={continuous} />
-          </div>
-        </section>
-      )}
+          {continuous && (
+            <section>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-[13px] font-medium uppercase tracking-[0.8px] text-[var(--color-text-muted)]">
+                  Live Feed
+                </h2>
+                <span className="font-mono text-[11px] text-[var(--color-text-dim)]">
+                  {liveFeed.length} recent
+                </span>
+              </div>
+              <LiveFeed items={liveFeed} isLive={continuous} />
+            </section>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

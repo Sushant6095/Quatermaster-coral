@@ -3,17 +3,16 @@
 /**
  * AuditTile — one card per named audit in the Cockpit grid.
  *
- * Shape:
- *  - top row: category-tinted icon + title + 1-line description
- *  - footer:  mono stat line  +  gold "Run now →" affordance
- *  - hover:   gold border, slight lift, button flips to filled
+ * Vercel project-card style: thin border, almost-no fill, generous padding,
+ * border color change on hover (no lift), "Run →" link not a button.
  */
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight } from "lucide-react";
 import type { AuditDefinition, AuditCategory } from "@/lib/types";
 import { cn } from "@/lib/utils/cn";
+import { relativeTime } from "@/lib/utils/time";
 
 export interface AuditTileProps extends AuditDefinition {
   /** Lucide icon component (already resolved by the parent). */
@@ -24,24 +23,31 @@ export interface AuditTileProps extends AuditDefinition {
   onRun?: (id: AuditDefinition["id"]) => void;
 }
 
-const CATEGORY_TINT: Record<AuditCategory, string> = {
-  Security: "text-[var(--color-coral)] bg-[var(--color-coral)]/10",
-  Spend: "text-[var(--color-gold)] bg-[var(--color-gold)]/10",
-  Compliance: "text-[var(--color-sea)] bg-[var(--color-sea)]/10",
+/** Icon wrapper tint per category */
+const CATEGORY_ICON_TINT: Record<AuditCategory, string> = {
+  Security: "text-[var(--color-coral)]",
+  Spend: "text-[var(--color-gold)]",
+  Compliance: "text-[var(--color-sea)]",
 };
 
-/** Relative "Xm ago / Xh ago / Xd ago" from an ISO timestamp. */
-function relativeTime(iso?: string): string {
-  if (!iso) return "never";
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const mins = Math.round(diffMs / 60_000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.round(hrs / 24);
-  return `${days}d ago`;
-}
+/** Category badge style per category */
+const CATEGORY_BADGE: Record<AuditCategory, string> = {
+  Security:
+    "border-[var(--color-coral)]/30 text-[var(--color-coral)]",
+  Spend:
+    "border-[var(--color-gold)]/30 text-[var(--color-gold)]",
+  Compliance:
+    "border-[var(--color-sea)]/30 text-[var(--color-sea)]",
+};
+
+/** Source connector chips per audit */
+const AUDIT_SOURCES: Record<string, string[]> = {
+  "QM-01": ["Deel", "Okta", "GitHub", "Slack"],
+  "QM-02": ["Okta", "GitHub"],
+  "QM-03": ["Stripe", "Okta"],
+  "QM-04": ["Stripe", "Slack"],
+  "QM-05": ["Deel", "Okta", "GitHub", "Slack"],
+};
 
 export function AuditTile({
   id,
@@ -51,11 +57,10 @@ export function AuditTile({
   icon: Icon,
   lastRunIso,
   lastFindingCount,
-  avgDurationMs,
   index = 0,
   onRun,
 }: AuditTileProps) {
-  const durationSec = avgDurationMs ? (avgDurationMs / 1000).toFixed(1) : "—";
+  const sources = AUDIT_SOURCES[id] ?? [];
 
   return (
     <motion.div
@@ -66,55 +71,71 @@ export function AuditTile({
         ease: [0.22, 1, 0.36, 1],
         delay: 0.1 + index * 0.05,
       }}
-      whileHover={{ y: -2 }}
       className={cn(
-        "group flex flex-col gap-4 rounded-[10px] border border-[var(--color-border)] bg-[var(--color-card)] p-5",
-        "transition-colors hover:border-[var(--color-gold)]/70"
+        "group flex flex-col rounded-lg border border-[var(--color-border)]",
+        "bg-[var(--color-card)]/40 p-5 transition-colors",
+        "cursor-pointer hover:border-[var(--color-border-strong)]"
       )}
+      onClick={() => onRun?.(id)}
     >
-      {/* Header row: icon + audit id pill */}
-      <div className="flex items-start justify-between">
-        <div
+      {/* Top row: icon + audit ID + category badge */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--color-card)]">
+            <Icon
+              className={cn("h-4 w-4", CATEGORY_ICON_TINT[category])}
+            />
+          </div>
+          <span className="font-mono text-[11px] text-[var(--color-text-dim)]">
+            {id}
+          </span>
+        </div>
+        <span
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-md",
-            CATEGORY_TINT[category]
+            "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wider",
+            CATEGORY_BADGE[category]
           )}
         >
-          <Icon className="h-[18px] w-[18px]" />
-        </div>
-        <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--color-text-dim)]">
-          {id}
+          {category}
         </span>
       </div>
 
-      {/* Title + description */}
-      <div className="flex flex-col gap-1.5">
-        <h3 className="text-[16px] font-medium text-[var(--color-text)]">
-          {name}
-        </h3>
-        <p className="line-clamp-1 text-[12px] text-[var(--color-text-muted)]">
-          {description}
-        </p>
-      </div>
+      {/* Name */}
+      <h3 className="mt-2.5 text-[15px] font-medium text-[var(--color-text)]">
+        {name}
+      </h3>
 
-      {/* Footer: stat line + Run now */}
-      <div className="mt-2 flex items-end justify-between border-t border-[var(--color-border)] pt-4">
-        <div className="font-mono text-[11px] text-[var(--color-text-muted)]">
-          Last run {relativeTime(lastRunIso)} ·{" "}
-          {lastFindingCount ?? 0}f · Avg {durationSec}s
+      {/* Description */}
+      <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+        {description}
+      </p>
+
+      {/* Source chips */}
+      {sources.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1">
+          {sources.map((src) => (
+            <span
+              key={src}
+              className="rounded border border-[var(--color-border)] bg-[var(--color-bg)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--color-text-dim)]"
+            >
+              {src}
+            </span>
+          ))}
         </div>
-        <button
-          type="button"
-          onClick={() => onRun?.(id)}
-          className={cn(
-            "flex items-center gap-1 rounded-md border border-transparent px-2.5 py-1 text-[12px] font-medium",
-            "text-[var(--color-gold)] transition-colors",
-            "group-hover:border-[var(--color-gold)] group-hover:bg-[var(--color-gold)] group-hover:text-[var(--color-bg)]"
-          )}
+      )}
+
+      {/* Footer */}
+      <div className="mt-4 flex items-center justify-between border-t border-[var(--color-border)] pt-4">
+        <span className="text-[12px] text-[var(--color-text-dim)]">
+          Last run {relativeTime(lastRunIso)} · {lastFindingCount ?? 0} findings
+        </span>
+        <Link
+          href={`/audits/${id}`}
+          className="text-[13px] text-[var(--color-gold)] hover:underline"
+          onClick={(e) => e.stopPropagation()}
         >
-          Run now
-          <ArrowRight className="h-3.5 w-3.5" />
-        </button>
+          Run →
+        </Link>
       </div>
     </motion.div>
   );

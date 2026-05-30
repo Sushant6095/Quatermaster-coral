@@ -21,6 +21,8 @@ next-env.d.ts
 # Local SQLite state
 .qm-state.db
 *.db
+*.db-shm
+*.db-wal
 
 # OS / editor
 .DS_Store
@@ -40,3 +42,7 @@ docs/captains-log.md
 
 # Playwright output
 .playwright-mcp/
+
+# Local Claude Code / MCP tooling config
+.claude/
+.mcp.json
