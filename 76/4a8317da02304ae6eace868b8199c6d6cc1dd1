@@ -1,0 +1,20 @@
+README.md
+  s_24c9b52b2aee75::t_6f26dc3e67ef61 157-170,178-209
+  s_24c9b52b2aee75::t_c2e8bfb6a34e90 265-466,468-519,522,524
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "764a8317da02304ae6eace868b8199c6d6cc1dd1",
+  "prompts": {},
+  "sessions": {
+    "s_24c9b52b2aee75": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f0f521d4-1cc2-4755-a908-e5c09bce42d2",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sushant Jain <sushant.jain@vyapar.com>"
+    }
+  }
+}
