@@ -1,0 +1,42 @@
+# dependencies
+node_modules
+.pnpm-store
+
+# Next.js build output
+.next
+out
+dist
+.turbo
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# environment & secrets — never commit
+.env
+.env.local
+.env.*.local
+
+# Coral workspace (contains API tokens)
+.coral-workspace
+
+# Local SQLite state
+.qm-state.db
+*.db
+
+# OS / editor
+.DS_Store
+*.log
+.vscode
+.idea
+
+# Internal planning docs (not for public repo)
+docs/bounty-strategy.md
+docs/demo-script.md
+docs/captains-log.md
+
+# Screenshot artifacts from dev session
+*.png
+*.jpeg
+*.mp4
+
+# Playwright output
+.playwright-mcp/

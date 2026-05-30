@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* ============================================================
+   QUARTERMASTER — Brand tokens
+   Locked dark theme. Match the zero_ui_risk_cockpit_dashboard.
+   Do not invent new colors. Use these everywhere.
+   ============================================================ */
+
+@theme {
+  /* Surfaces */
+  --color-bg: #070E1A;
+  --color-surface: #0F1A2E;
+  --color-card: #13213A;
+  --color-card-hover: #182943;
+  --color-border: #22324F;
+  --color-border-strong: #2E4366;
+  --color-code-bg: #0E1626;
+
+  /* Text */
+  --color-text: #E8EEF7;
+  --color-text-muted: #9AA7BD;
+  --color-text-dim: #5C6B85;
+
+  /* Brand accents */
+  --color-gold: #E4B66B;
+  --color-gold-hover: #EFC07A;
+  --color-gold-deep: #C8973F;
+  --color-coral: #FF7A6B;
+  --color-coral-deep: #E26D5C;
+  --color-sea: #5BD2C7;
+  --color-lime: #A8E063;
+
+  /* Severity (semantic) */
+  --color-p0: #FF7A6B;
+  --color-p1: #E4B66B;
+  --color-p2: #9AA7BD;
+
+  /* Type */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  /* Spacing grid (8pt with 4pt half-steps) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+  --space-10: 64px;
+  --space-12: 96px;
+}
+
+html, body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+* { border-color: var(--color-border); }
+
+/* Selection */
+::selection { background: rgba(228, 182, 107, 0.22); color: var(--color-text); }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 999px; border: 2px solid var(--color-bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Grid background pattern (used on entrance / empty states) */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(34, 50, 79, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 50, 79, 0.4) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Connection-health pulse (used in top bar dot) */
+@keyframes pulse-breath {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.15); }
+}
+.animate-breath { animation: pulse-breath 2s ease-in-out infinite; }
+
+/* Caret blink for SQL streaming */
+@keyframes caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.animate-caret { animation: caret 1s steps(1) infinite; }
+
+/* Row pop-in (Audit Run results) */
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-row-in { animation: row-in 200ms ease-out both; }
+
+/* Severity-tag fade in (after row lands) */
+@keyframes tag-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-tag-in { animation: tag-in 200ms ease-out 150ms both; }

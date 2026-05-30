@@ -1,0 +1,26 @@
+{
+  "name": "@quartermaster/mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Quartermaster as an MCP server. Exposes run_audit / get_findings / draft_remediation over stdio so any MCP-aware client (Claude Code, Cursor, custom agents) can call Quartermaster's audits as tools.",
+  "type": "module",
+  "main": "index.ts",
+  "bin": {
+    "quartermaster-mcp": "./index.ts"
+  },
+  "scripts": {
+    "start": "tsx index.ts",
+    "dev": "tsx watch index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

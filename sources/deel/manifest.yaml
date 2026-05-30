@@ -1,0 +1,186 @@
+# Coral custom source spec — Deel HRIS
+# Submitted to the Coral catalog as the "Chart New Waters" bounty entry.
+#
+# Why Deel? Most HRIS connectors in the wild stop at full-time-employee (FTE)
+# records. Deel is HRIS + contractor-of-record, so it is the only place where
+# contractor seats, EOR placements, and FTEs share a single identity table.
+# That makes deel.directory the ground-truth anchor for cross-source joins
+# against Okta, GitHub, Slack, and Stripe — and the reason Quartermaster's
+# Zombie Account Hunter (QM-01) can catch offboarded contractors that other
+# HRIS-only audits silently miss.
+#
+# DSL: Coral source-manifest v3 (dsl_version 3, http backend).
+# Lint:  coral source lint ./sources/deel/manifest.yaml
+# Add:   coral source add --file ./sources/deel/manifest.yaml
+# Test:  DEEL_API_TOKEN=… coral source test deel
+
+dsl_version: 3
+name: deel
+version: "0.1.0"
+backend: http
+description: >-
+  HRIS + contractor-of-record source for Deel. Exposes the people directory
+  and contract ledger from the Deel REST v2 API as Coral tables. Designed as
+  the identity anchor for federated audits across Okta, GitHub, Slack, and
+  Stripe — work_email is the join key.
+
+base_url: https://api.letsdeel.com/rest/v2
+
+# --- Inputs ----------------------------------------------------------------
+# Resolved from environment variables (or `--interactive`) at
+# `coral source add` time and stored in Coral's local credential store.
+# They never leave the machine.
+inputs:
+  DEEL_API_TOKEN:
+    kind: secret
+    required: true
+    hint: >-
+      Personal access token from https://app.deel.com/developer-center
+      → "Generate API token". Needs the People and Contracts read scopes.
+
+# --- Auth ------------------------------------------------------------------
+# Deel uses a bearer token in the Authorization header.
+auth:
+  type: HeaderAuth
+  headers:
+    - name: Authorization
+      from: template
+      template: "Bearer {{input.DEEL_API_TOKEN}}"
+
+# --- Rate limiting ---------------------------------------------------------
+# Deel honors a Retry-After header on 429. Coral backs off accordingly.
+rate_limit:
+  retry_after_header: Retry-After
+
+# --- Tables ----------------------------------------------------------------
+tables:
+
+  # ---- directory --------------------------------------------------------
+  # The people table. One row per worker (FTE, contractor, EOR placement).
+  - name: directory
+    description: >-
+      Every worker known to Deel, including contractors and EOR placements.
+      The identity anchor for federated joins: work_email matches
+      okta.users.email, github.members.email, slack.members.profile__email.
+    guide: >-
+      Start with `SELECT work_email, is_active, termination_date FROM
+      deel.directory LIMIT 10`. Offboarding audits filter on
+      `WHERE is_active = false`.
+    request:
+      method: GET
+      path: /people
+    response:
+      rows_path: [data]
+    pagination:
+      mode: offset
+      offset_param: offset
+      offset_start: 0
+      page_size:
+        default: 100
+        max: 100
+        query_param: limit
+    columns:
+      - name: person_id
+        type: Utf8
+        nullable: false
+        description: Deel-internal stable identifier for the worker.
+        expr: {kind: path, path: [id]}
+      - name: first_name
+        type: Utf8
+        nullable: true
+        description: Worker given name.
+        expr: {kind: path, path: [first_name]}
+      - name: last_name
+        type: Utf8
+        nullable: true
+        description: Worker family name.
+        expr: {kind: path, path: [last_name]}
+      - name: work_email
+        type: Utf8
+        nullable: true
+        description: Primary work email; the cross-source join key.
+        expr: {kind: path, path: [emails, work]}
+      - name: department__name
+        type: Utf8
+        nullable: true
+        description: Flattened department name (double-underscore convention).
+        expr: {kind: path, path: [department, name]}
+      - name: country
+        type: Utf8
+        nullable: true
+        description: Worker country of record.
+        expr: {kind: path, path: [country]}
+      - name: is_active
+        type: Boolean
+        nullable: true
+        description: Whether the worker is currently active in Deel.
+        expr: {kind: path, path: [is_active]}
+      - name: hire_date
+        type: Timestamp
+        nullable: true
+        description: Hiring date.
+        expr: {kind: path, path: [hiring_date]}
+      - name: termination_date
+        type: Timestamp
+        nullable: true
+        description: Termination date; null while the worker is active.
+        expr: {kind: path, path: [termination_date]}
+
+  # ---- contracts --------------------------------------------------------
+  # The contract ledger. One row per contract — captures contractor scope,
+  # status (active / terminated / paused), and term boundaries.
+  - name: contracts
+    description: >-
+      Contract records joined to workers by email. The status column is the
+      primary signal for offboarding audits — a status of 'terminated' or
+      'paused' on an account that still holds GitHub admin is a P0 finding.
+    guide: >-
+      Join to directory on `c.worker__email = d.work_email`. Filter on
+      `status = 'terminated'` to surface ended contracts.
+    request:
+      method: GET
+      path: /contracts
+    response:
+      rows_path: [data]
+    pagination:
+      mode: offset
+      offset_param: offset
+      offset_start: 0
+      page_size:
+        default: 100
+        max: 100
+        query_param: limit
+    columns:
+      - name: contract_id
+        type: Utf8
+        nullable: false
+        description: Deel-internal contract identifier.
+        expr: {kind: path, path: [id]}
+      - name: worker__email
+        type: Utf8
+        nullable: true
+        description: Flattened worker email; join key against directory.work_email.
+        expr: {kind: path, path: [worker, email]}
+      - name: status
+        type: Utf8
+        nullable: true
+        description: One of active | terminated | paused | in_progress.
+        expr: {kind: path, path: [status]}
+      - name: start_date
+        type: Timestamp
+        nullable: true
+        description: Contract start date.
+        expr: {kind: path, path: [start_date]}
+      - name: end_date
+        type: Timestamp
+        nullable: true
+        description: Contract end date; null for open-ended contracts.
+        expr: {kind: path, path: [end_date]}
+
+# --- Smoke tests -----------------------------------------------------------
+# `coral source test deel` runs these. All three should return rows on a
+# real Deel tenant; on a fresh sandbox the second and third may return 0.
+test_queries:
+  - "SELECT person_id, work_email, is_active FROM deel.directory LIMIT 5;"
+  - "SELECT work_email, termination_date FROM deel.directory WHERE is_active = false LIMIT 25;"
+  - "SELECT d.work_email, c.status, c.end_date FROM deel.directory d JOIN deel.contracts c ON c.worker__email = d.work_email WHERE c.status = 'active' LIMIT 10;"

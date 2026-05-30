@@ -1,0 +1,11 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  experimental: {
+    serverActions: { allowedOrigins: ['localhost:3000'] },
+  },
+  serverExternalPackages: ['better-sqlite3', '@modelcontextprotocol/sdk'],
+  transpilePackages: ['@splinetool/react-spline', '@splinetool/runtime'],
+};
+
+export default nextConfig;
