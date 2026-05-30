@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils/cn";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 interface SourceDef {
   id: string;
@@ -184,22 +185,22 @@ export function LandingFederation() {
               return (
                 <g key={src.id} transform={`translate(${SOURCE_X}, ${y})`}>
                   <circle
-                    r="28"
-                    fill="var(--color-card)"
+                    r="26"
+                    fill="var(--color-text)"
                     stroke={src.color}
                     strokeWidth="1.5"
-                    strokeOpacity="0.5"
+                    strokeOpacity="0.6"
                   />
-                  <text
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    fontSize="11"
-                    fontFamily="var(--font-mono)"
-                    fontWeight="600"
-                    fill={src.color}
-                  >
-                    {src.icon}
-                  </text>
+                  <foreignObject x="-15" y="-15" width="30" height="30">
+                    <div className="flex h-full w-full items-center justify-center">
+                      <BrandLogo
+                        name={src.id}
+                        size={26}
+                        colored
+                        title={src.name}
+                      />
+                    </div>
+                  </foreignObject>
                   <text
                     y="40"
                     textAnchor="middle"

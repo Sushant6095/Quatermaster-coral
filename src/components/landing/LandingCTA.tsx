@@ -196,21 +196,6 @@ export function LandingCTA() {
           ))}
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="relative z-10 mt-16 border-t border-[var(--color-border)] pt-8">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
-          <div className="flex items-center gap-2">
-            <Anchor className="h-4 w-4 text-[var(--color-gold)]" aria-hidden="true" />
-            <span className="text-sm font-medium text-[var(--color-text-muted)]">
-              Quartermaster
-            </span>
-          </div>
-          <span className="text-xs text-[var(--color-text-dim)]">
-            Pirates of the Coral-bean Hackathon · Track 1 · Coral + Claude
-          </span>
-        </div>
-      </footer>
     </section>
   );
 }

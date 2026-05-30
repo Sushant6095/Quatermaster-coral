@@ -69,6 +69,28 @@ html, body {
 
 * { border-color: var(--color-border); }
 
+/* ============================================================
+   Landing light theme (elizaos-style hero + footer).
+   Scoped to .lp-light — the dashboard stays on the dark @theme.
+   ============================================================ */
+.lp-light {
+  --lp-sky-top: #BBDcFF;
+  --lp-sky-mid: #D7E9FF;
+  --lp-sky-bottom: #EEF4FB;
+  --lp-cloud: #FFFFFF;
+  --lp-ink: #0A0F1A;
+  --lp-ink-soft: #36425A;
+  --lp-ink-dim: #6B7689;
+  --lp-surface: #FFFFFF;
+  --lp-surface-2: #EDF2F9;
+  --lp-border: #C9D8EC;
+  --lp-gold: #C8973F;
+  --lp-sea: #1E9AA8;
+
+  background: var(--lp-sky-bottom);
+  color: var(--lp-ink);
+}
+
 /* Selection */
 ::selection { background: rgba(228, 182, 107, 0.22); color: var(--color-text); }
 

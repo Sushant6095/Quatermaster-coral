@@ -4,6 +4,7 @@ import { LandingAudits } from "@/components/landing/LandingAudits";
 import { LandingFederation } from "@/components/landing/LandingFederation";
 import { LandingDifferentiators } from "@/components/landing/LandingDifferentiators";
 import { LandingCTA } from "@/components/landing/LandingCTA";
+import { LandingFooter } from "@/components/landing/LandingFooter";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo";
 
 /** SoftwareApplication structured data for rich search results. */
@@ -32,6 +33,7 @@ export default function LandingPage() {
       <LandingFederation />
       <LandingDifferentiators />
       <LandingCTA />
+      <LandingFooter />
     </main>
   );
 }

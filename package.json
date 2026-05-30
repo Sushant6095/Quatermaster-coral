@@ -39,6 +39,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "shiki": "^1.24.4",
+    "simple-icons": "^16.21.0",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.6.0",
     "three": "^0.184.0",

@@ -13,6 +13,7 @@ import type { LucideIcon } from "lucide-react";
 import type { AuditDefinition, AuditCategory } from "@/lib/types";
 import { cn } from "@/lib/utils/cn";
 import { RelativeTime } from "./Time";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 export interface AuditTileProps extends AuditDefinition {
   /** Lucide icon component (already resolved by the parent). */
@@ -110,14 +111,15 @@ export function AuditTile({
         {description}
       </p>
 
-      {/* Source chips */}
+      {/* Source chips with real logos */}
       {sources.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1">
           {sources.map((src) => (
             <span
               key={src}
-              className="rounded border border-[var(--color-border)] bg-[var(--color-bg)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--color-text-dim)]"
+              className="inline-flex items-center gap-1.5 rounded border border-[var(--color-border)] bg-[var(--color-bg)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--color-text-muted)]"
             >
+              <BrandLogo name={src} size={11} />
               {src}
             </span>
           ))}
