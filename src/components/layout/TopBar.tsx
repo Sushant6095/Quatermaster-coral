@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Search, MessageSquare, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { ProfileMenu } from "./ProfileMenu";
 
 interface SourcesHealth {
   ok: boolean;
@@ -137,8 +138,8 @@ export function TopBar() {
           <MessageSquare className="h-4 w-4" />
         </button>
 
-        {/* Avatar */}
-        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-[var(--color-gold-deep)] to-[var(--color-coral-deep)]" />
+        {/* Profile menu */}
+        <ProfileMenu />
       </div>
     </header>
   );
