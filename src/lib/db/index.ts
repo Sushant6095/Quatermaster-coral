@@ -70,7 +70,9 @@ export function getDb(): Database.Database {
   // better-sqlite3 to the browser.
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Ctor = require("better-sqlite3") as typeof Database;
-  const path = process.env.QM_STATE_DB ?? "./.qm-state.db";
+  // Vercel's filesystem is read-only except /tmp — use writable path automatically.
+  const defaultPath = process.env.VERCEL ? "/tmp/qm-state.db" : "./.qm-state.db";
+  const path = process.env.QM_STATE_DB ?? defaultPath;
   cached = new Ctor(path);
   cached.pragma("journal_mode = WAL");
   initSchema(cached);
