@@ -14,3 +14,11 @@ export function relativeTime(iso?: string): string {
   const days = Math.round(hrs / 24);
   return `${days}d`;
 }
+
+/** Zero-padded HH:MM in the viewer's local timezone. */
+export function formatClock(iso: string): string {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(
+    d.getMinutes()
+  ).padStart(2, "0")}`;
+}

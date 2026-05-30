@@ -12,7 +12,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import type { AuditDefinition, AuditCategory } from "@/lib/types";
 import { cn } from "@/lib/utils/cn";
-import { relativeTime } from "@/lib/utils/time";
+import { RelativeTime } from "./Time";
 
 export interface AuditTileProps extends AuditDefinition {
   /** Lucide icon component (already resolved by the parent). */
@@ -126,11 +126,9 @@ export function AuditTile({
 
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between border-t border-[var(--color-border)] pt-4">
-        <span
-          className="text-[12px] text-[var(--color-text-dim)]"
-          suppressHydrationWarning
-        >
-          Last run {relativeTime(lastRunIso)} · {lastFindingCount ?? 0} findings
+        <span className="text-[12px] text-[var(--color-text-dim)]">
+          Last run <RelativeTime iso={lastRunIso} /> · {lastFindingCount ?? 0}{" "}
+          findings
         </span>
         <Link
           href={`/audits/${id}`}

@@ -10,6 +10,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { Finding, Severity } from "@/lib/types";
 import { cn } from "@/lib/utils/cn";
+import { ClockTime } from "./Time";
 
 export interface LiveFeedProps {
   items: Finding[];
@@ -22,14 +23,6 @@ const SEVERITY_TAG: Record<Severity, string> = {
   P1: "bg-[var(--color-gold)]/10 text-[var(--color-gold)]",
   P2: "bg-transparent text-[var(--color-text-dim)]",
 };
-
-/** Render an ISO timestamp as HH:MM in the local tz. */
-function formatClock(iso: string): string {
-  const d = new Date(iso);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(
-    d.getMinutes()
-  ).padStart(2, "0")}`;
-}
 
 /** Truncate the rationale to ~40 chars so the row stays single-line. */
 function snippet(text: string, max = 40): string {
@@ -128,11 +121,8 @@ export function LiveFeed({ items, isLive }: LiveFeedProps) {
               </div>
 
               {/* Timestamp */}
-              <span
-                className="ml-auto shrink-0 font-mono text-[11px] text-[var(--color-text-dim)]"
-                suppressHydrationWarning
-              >
-                {formatClock(f.detectedIso)}
+              <span className="ml-auto shrink-0 font-mono text-[11px] text-[var(--color-text-dim)]">
+                <ClockTime iso={f.detectedIso} />
               </span>
             </motion.li>
           ))}
