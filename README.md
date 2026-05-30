@@ -155,17 +155,16 @@ Try: *"Use Quartermaster to check for offboarded contractors with active GitHub 
 Falls back to deterministic mocks when the orchestrator isn't running — the demo always works.
 
 ```mermaid
-%%{init: {'theme': 'dark'}}%%
 flowchart LR
-    CC[Claude Code\nor any MCP client] -->|MCP stdio| QMS
-    subgraph QMS["quartermaster-mcp  (mcp-server/index.ts)"]
-        RA[run_audit] --> BRIDGE
-        GF[get_findings] --> BRIDGE
-        DR[draft_remediation] --> BRIDGE
-        BRIDGE{orchestrator\nbridge}
+    CC["Claude Code or any MCP client"] -->|"MCP stdio"| QMS
+    subgraph QMS["quartermaster-mcp — mcp-server/index.ts"]
+        RA["run_audit"] --> BRIDGE
+        GF["get_findings"] --> BRIDGE
+        DR["draft_remediation"] --> BRIDGE
+        BRIDGE{"orchestrator bridge"}
     end
-    BRIDGE -->|live| QM[Quartermaster\norchestrator]
-    BRIDGE -->|offline| MOCK[Deterministic\nfixture mocks]
+    BRIDGE -->|"live"| QM["Quartermaster orchestrator"]
+    BRIDGE -->|"offline"| MOCK["Deterministic fixture mocks"]
 ```
 
 </details>
@@ -176,36 +175,34 @@ flowchart LR
 `/schema` renders all 6 sources as React Flow swimlanes with 16 tables and 14 auto-detected join edges (email joins ranked 0.85–0.98 confidence, FK edges at 0.97–0.98).
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#13213A', 'lineColor': '#5BD2C7', 'primaryTextColor': '#E8EEF7', 'edgeLabelBackground': '#0E1626'}}}%%
 flowchart TB
-    subgraph DEEL["🏢 DEEL"]
-        direction TB
-        d1["directory\nwork_email ●"]
-        d2["contracts\nwork_email ●"]
+    subgraph DEEL["DEEL"]
+        d1["directory — work_email"]
+        d2["contracts — work_email"]
     end
-    subgraph OKTA["🔑 OKTA"]
-        o1["users\nemail ●"]
-        o2["app_assignments\nuser_login"]
+    subgraph OKTA["OKTA"]
+        o1["users — email"]
+        o2["app_assignments — user_login"]
     end
-    subgraph GITHUB["🐙 GITHUB"]
-        g1["members\nemail ●"]
-        g2["commits\nauthor__email ●"]
+    subgraph GITHUB["GITHUB"]
+        g1["members — email"]
+        g2["commits — author__email"]
     end
-    subgraph SLACK["💬 SLACK"]
-        s1["members\nprofile__email ●"]
+    subgraph SLACK["SLACK"]
+        s1["members — profile__email"]
     end
-    subgraph STRIPE["💳 STRIPE"]
-        st1["customers\nemail ●"]
-        st2["subscriptions\ncustomer__email"]
+    subgraph STRIPE["STRIPE"]
+        st1["customers — email"]
+        st2["subscriptions — customer__email"]
     end
 
-    d1 ---|"email join · 0.95"| o1
-    d1 ---|"email join · 0.95"| g1
-    d1 ---|"email join · 0.95"| s1
-    d1 ---|"email join · 0.90"| st1
-    o1 ---|"email join · 0.88"| g1
-    g2 ---|"FK · 0.85"| g1
-    st2 ---|"FK · 0.98"| st1
+    d1 ---|"email join 0.95"| o1
+    d1 ---|"email join 0.95"| g1
+    d1 ---|"email join 0.95"| s1
+    d1 ---|"email join 0.90"| st1
+    o1 ---|"email join 0.88"| g1
+    g2 ---|"FK 0.85"| g1
+    st2 ---|"FK 0.98"| st1
 ```
 
 Click any two table nodes → **Generate SQL →** navigates to `/playground` with the JOIN pre-populated:
@@ -265,66 +262,48 @@ Verify everything at `/sources` — all five dots should be green.
 ### ⚙️ Full system
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#13213A', 'primaryTextColor': '#E8EEF7', 'primaryBorderColor': '#E4B66B', 'lineColor': '#5BD2C7', 'secondaryColor': '#0F1A2E', 'tertiaryColor': '#070E1A', 'clusterBkg': '#0F1A2E', 'titleColor': '#E4B66B', 'edgeLabelBackground': '#0F1A2E', 'nodeTextColor': '#E8EEF7'}}}%%
 flowchart TB
-    subgraph UI["🖥  Browser — Next.js 15 · React 19 · Three.js · anime.js"]
+    subgraph UI["Browser — Next.js 15 · React 19 · Three.js · anime.js"]
         direction LR
-        LP[Landing Page\nThree.js Compass]
-        CK[Risk Cockpit\nLive Feed]
-        CP[QM Copilot\nNL → SQL]
-        AR[Audit Runner\nSQL Stream]
-        BR[Blast Radius\nForce Graph]
-        SG[Schema Graph\nSwimLanes]
-        LG[Compliance\nLedger]
+        LP["Landing Page"] & CK["Risk Cockpit"] & CP["QM Copilot"] & AR["Audit Runner"] & BR["Blast Radius"] & SG["Schema Graph"] & LG["Ledger"]
     end
 
-    subgraph API["⚡  Next.js API Routes — Node 22 · better-sqlite3"]
+    subgraph API["Next.js API Routes — Node 22 · better-sqlite3"]
         direction LR
-        R1[/audits/run\nSSE stream]
-        R2[/copilot/ask\nSSE stream]
-        R3[/continuous/stream\nSSE heartbeat]
-        R4[/findings/:id/\nblast-radius]
-        R5[/ledger\nSHA-256 chain]
-        R6[/schema/graph\nauto-join keys]
+        R1["audits/run — SSE"]
+        R2["copilot/ask — SSE"]
+        R3["continuous/stream — SSE"]
+        R4["findings/blast-radius"]
+        R5["ledger — SHA-256"]
+        R6["schema/graph"]
     end
 
-    subgraph CORAL["🔗  Coral — Apache DataFusion over MCP stdio"]
-        FE[Federated\nExecutor]
-        SC[Schema\nCatalog]
-        LC[Local Row\nCache + TTL]
-        FE <--> SC
-        FE <--> LC
+    subgraph CORAL["Coral — Apache DataFusion over MCP stdio"]
+        FE["Federated Executor"]
+        SC["Schema Catalog"]
+        LC["Local Row Cache + TTL"]
+        FE --- SC
+        FE --- LC
     end
 
-    subgraph CLAUDE["🤖  Claude Sonnet 4.6 — Anthropic SDK"]
-        SA[SQL Author\ncompileSQL]
-        FN[Finding\nNarrator]
-        RD[Remediation\nDrafter]
+    subgraph CLAUDE["Claude Sonnet 4.6 — Anthropic SDK"]
+        SA["SQL Author"]
+        FN["Finding Narrator"]
+        RD["Remediation Drafter"]
     end
 
-    subgraph SOURCES["📡  Data Sources"]
-        D[("Deel ✦\nHRIS + Contractors")]
-        O[("Okta\nIdentity")]
-        G[("GitHub\nCode + Commits")]
-        S[("Slack\nChat + Channels")]
-        ST[("Stripe\nBilling")]
+    subgraph SOURCES["Data Sources"]
+        D[("Deel — HRIS + Contractors")]
+        O[("Okta — Identity")]
+        G[("GitHub — Code")]
+        S[("Slack — Chat")]
+        ST[("Stripe — Billing")]
     end
 
-    UI -->|HTTP + SSE| API
-    API -->|MCP stdio| CORAL
-    API -->|Anthropic SDK| CLAUDE
-    CORAL -->|REST APIs| SOURCES
-
-    classDef ui fill:#13213A,stroke:#E4B66B,color:#E8EEF7
-    classDef api fill:#0F1A2E,stroke:#5BD2C7,color:#E8EEF7
-    classDef coral fill:#0E1626,stroke:#5BD2C7,color:#5BD2C7
-    classDef claude fill:#0E1626,stroke:#FF7A6B,color:#FF7A6B
-    classDef source fill:#13213A,stroke:#22324F,color:#9AA7BD
-    class LP,CK,CP,AR,BR,SG,LG ui
-    class R1,R2,R3,R4,R5,R6 api
-    class FE,SC,LC coral
-    class SA,FN,RD claude
-    class D,O,G,S,ST source
+    UI -->|"HTTP + SSE"| API
+    API -->|"MCP stdio"| CORAL
+    API -->|"Anthropic SDK"| CLAUDE
+    CORAL -->|"REST APIs"| SOURCES
 ```
 
 > **Data never leaves your machine.** Coral caches source rows locally. The orchestrator joins them at query time. Claude sees only column names and aggregate counts — never raw employee PII.
@@ -334,39 +313,36 @@ flowchart TB
 ### 🧠 QM Copilot — NL → Federated SQL pipeline
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#13213A', 'primaryTextColor': '#E8EEF7', 'primaryBorderColor': '#E4B66B', 'lineColor': '#E4B66B', 'secondaryColor': '#0F1A2E', 'actorBkg': '#0F1A2E', 'actorBorder': '#E4B66B', 'actorTextColor': '#E8EEF7', 'activationBkgColor': '#13213A', 'signalColor': '#5BD2C7', 'signalTextColor': '#E8EEF7', 'labelBoxBkgColor': '#0E1626', 'labelTextColor': '#9AA7BD', 'loopTextColor': '#9AA7BD', 'noteBkgColor': '#13213A', 'noteTextColor': '#E8EEF7', 'noteBorderColor': '#22324F'}}}%%
 sequenceDiagram
     autonumber
-    actor U as 👤 User
+    actor U as User
     participant C as Copilot UI
     participant CL as Claude Sonnet 4.6
     participant V as SQL Validator
     participant CR as Coral Engine
-    participant DB as SQLite Ledger
 
     U->>C: "Find zombies with GitHub commits"
     C->>CL: compileSQL(question + schemaCatalog)
-    Note over CL: Grounded on live schema catalog<br/>deel · okta · github · slack · stripe
-    CL-->>C: ＜sql＞SELECT ...＜/sql＞ + reasoning
+    Note over CL: Grounded on Coral schema catalog
+    CL-->>C: SELECT ... reasoning
 
     C->>V: validateSQL(sql)
-    alt Validation fails (max 3 retries)
-        V-->>C: ✗ "Unknown schema: foobar.users"
+    alt Validation fails — up to 3 retries
+        V-->>C: Unknown schema foobar.users
         C->>CL: recompile with error feedback
         CL-->>C: revised SQL
     end
-    V-->>C: ✓ SELECT starts with WITH — valid
+    V-->>C: valid — SELECT/WITH only
 
-    C-->>U: 📡 SSE event: compile {sql, reasoning}
-    C->>CR: executeSQL(sql) over MCP stdio
-    CR-->>C: {rows, durationMs, sourcesUsed, rowsScanned}
-    C-->>U: 📡 SSE event: execute {rows, meta}
+    C-->>U: SSE compile event
+    C->>CR: executeSQL over MCP stdio
+    CR-->>C: rows, durationMs, sourcesUsed
+    C-->>U: SSE execute event
 
-    C->>CL: narrateFindings(rows, "Copilot query")
-    CL-->>C: {summary, perRowRationales[]}
-    C-->>U: 📡 SSE event: narrate {summary}
-    C-->>U: 📡 SSE event: done
-    Note over U,C: 5 sources · 4,820 rows · 0.003¢
+    C->>CL: narrateFindings(rows)
+    CL-->>C: summary + perRowRationales
+    C-->>U: SSE narrate event
+    C-->>U: SSE done — 5 sources, 4820 rows, 0.003c
 ```
 
 ---
@@ -374,46 +350,41 @@ sequenceDiagram
 ### 🔴 Continuous Mode — Live diff engine
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#13213A', 'primaryTextColor': '#E8EEF7', 'primaryBorderColor': '#A8E063', 'lineColor': '#A8E063', 'secondaryColor': '#0F1A2E', 'tertiaryColor': '#070E1A', 'edgeLabelBackground': '#0F1A2E'}}}%%
 flowchart LR
-    subgraph LOOP["⏱  Continuous Loop  (every 30s)"]
+    subgraph LOOP["Continuous Loop — every 30s"]
         direction TB
-        T[Tick starts]
-        RQ["runAudit('QM-01')\nSSE async iterator"]
-        ROWS[Collect all\nrow events]
-        DIFF{Diff vs\ncache}
-        CACHE[("Map＜email, Finding＞\nCache")]
-        NEW[New findings\nnet of cache]
-        EMIT[Emit to\nEventEmitter]
-        UPDATE[Update cache]
-        WAIT[Wait for next tick\nQM_CONTINUOUS_INTERVAL]
+        T["Tick starts"]
+        RQ["runAudit QM-01"]
+        ROWS["Collect row events"]
+        DIFF{"Diff vs cache"}
+        CACHE[("Map of email to Finding")]
+        NEW["Net-new findings"]
+        EMIT["Emit to EventEmitter"]
+        UPDATE["Update cache"]
+        WAIT["Wait QM_CONTINUOUS_INTERVAL"]
         T --> RQ --> ROWS --> DIFF
-        DIFF -->|unchanged| WAIT
-        DIFF -->|new rows| NEW --> EMIT --> UPDATE --> WAIT
+        DIFF -->|"no change"| WAIT
+        DIFF -->|"new rows"| NEW --> EMIT --> UPDATE --> WAIT
         CACHE --> DIFF
         UPDATE --> CACHE
         WAIT --> T
     end
 
-    subgraph SSE["📡  SSE Endpoint  /api/continuous/stream"]
-        Q[Event queue\ndrain on each GET]
-        HB[Heartbeat\nevery 15s]
+    subgraph SSE["SSE Endpoint — continuous/stream"]
+        Q["Event queue"]
+        HB["Heartbeat every 15s"]
     end
 
-    subgraph CLIENT["🖥  Cockpit Client"]
-        ES[EventSource\nopen when Live = ON]
-        LF[LiveFeed state\nmax 50 items]
-        UI[Animate in\n200ms fade + slide]
+    subgraph CLIENT["Cockpit Client"]
+        ES["EventSource — Live ON"]
+        LF["LiveFeed state max 50"]
+        UI["Animate in 200ms"]
         ES --> LF --> UI
     end
 
     EMIT --> Q
-    Q -->|finding event| ES
-    HB -->|ping| ES
-
-    style LOOP fill:#0F1A2E,stroke:#A8E063
-    style SSE fill:#0E1626,stroke:#5BD2C7
-    style CLIENT fill:#13213A,stroke:#E4B66B
+    Q -->|"finding event"| ES
+    HB -->|"ping"| ES
 ```
 
 ---
@@ -421,49 +392,38 @@ flowchart LR
 ### 💥 Blast Radius — Reachability graph
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#13213A', 'primaryTextColor': '#E8EEF7', 'primaryBorderColor': '#FF7A6B', 'lineColor': '#FF7A6B', 'secondaryColor': '#0F1A2E', 'tertiaryColor': '#070E1A', 'edgeLabelBackground': '#0E1626', 'nodeTextColor': '#E8EEF7', 'clusterBkg': '#0F1A2E'}}}%%
 flowchart TB
-    subgraph INPUT["🔍  Input: principal email"]
-        PE["mark.reyes@acme.corp"]
+    PE["Input: mark.reyes@acme.corp"]
+
+    subgraph QUERIES["Coral reachability queries — parallel"]
+        Q1["github.members — repos via collaborators"]
+        Q2["slack.members — channels via membership"]
+        Q3["github.repository_secrets — via repo set"]
+        Q4["linear.issues — assignee matches"]
+        Q5["stripe.customers — billing email"]
     end
 
-    subgraph QUERIES["⚡  Coral reachability queries (parallel)"]
-        Q1["github.members\n→ repos via collaborators"]
-        Q2["slack.members\n→ channels via membership"]
-        Q3["github.repository_secrets\n→ secrets via repo set"]
-        Q4["linear.issues\n→ assignee matches"]
-        Q5["stripe.customers\n→ billing email match"]
+    subgraph GRAPH["Graph Construction"]
+        NODES["47 BlastNodes — person, repo, channel, secret, service"]
+        EDGES["60 BlastEdges — admin, member, reads-secret, bills-to"]
     end
 
-    subgraph GRAPH["🕸  Graph Construction"]
-        NODES["47 BlastNodes\nperson · repo · channel\nsecret · service"]
-        EDGES["~60 BlastEdges\nadmin · member · reads-secret\nbills-to · assignee"]
+    subgraph RENDER["Three.js Force Graph"]
+        CENTER["Person node — gold, 1.5x, glowing"]
+        REPO["Repo nodes — sea color"]
+        SECRET["Secret nodes — coral, P0 glow"]
+        SERVICE["Service nodes — lime"]
     end
 
-    subgraph RENDER["🎨  Three.js Force Graph"]
-        CENTER["Central node\ngold · 1.5× · glowing"]
-        REPO["Repo nodes\n--color-sea"]
-        CHAN["Channel nodes\n--color-text-muted"]
-        SECRET["Secret nodes\n--color-coral · P0 glow"]
-        SERVICE["Service nodes\n--color-lime"]
-    end
-
-    subgraph ACTIONS["🖱  Interactions"]
-        CLICK["Node click\n→ SQL evidence popover"]
-        EXPORT["Export PNG\n→ renderer.domElement.toDataURL()"]
-        CLOSE["ESC → close modal\n→ return to audit run"]
+    subgraph ACTIONS["Interactions"]
+        CLICK["Node click — SQL evidence popover"]
+        EXPORT["Export PNG — canvas.toDataURL"]
     end
 
     PE --> Q1 & Q2 & Q3 & Q4 & Q5
     Q1 & Q2 & Q3 & Q4 & Q5 --> NODES & EDGES
-    NODES & EDGES --> CENTER & REPO & CHAN & SECRET & SERVICE
-    RENDER --> CLICK & EXPORT & CLOSE
-
-    style INPUT fill:#0F1A2E,stroke:#FF7A6B
-    style QUERIES fill:#0E1626,stroke:#5BD2C7
-    style GRAPH fill:#13213A,stroke:#E4B66B
-    style RENDER fill:#0F1A2E,stroke:#FF7A6B
-    style ACTIONS fill:#0E1626,stroke:#22324F
+    NODES & EDGES --> CENTER & REPO & SECRET & SERVICE
+    RENDER --> CLICK & EXPORT
 ```
 
 ---
@@ -471,52 +431,42 @@ flowchart TB
 ### 🗺️ Coral federation — 5 sources, 1 query
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#13213A', 'primaryTextColor': '#E8EEF7', 'primaryBorderColor': '#5BD2C7', 'lineColor': '#5BD2C7', 'secondaryColor': '#0F1A2E', 'tertiaryColor': '#070E1A', 'clusterBkg': '#0F1A2E', 'nodeTextColor': '#E8EEF7', 'edgeLabelBackground': '#0E1626'}}}%%
 flowchart LR
-    subgraph S1["Deel ✦  HRIS + CoR"]
-        D1[directory\nwork_email ★]
-        D2[contracts\nstatus · term_date]
+    subgraph DEEL["Deel — HRIS + Contractors"]
+        D1["directory — work_email KEY"]
+        D2["contracts — status, term_date"]
     end
 
-    subgraph S2["Okta  Identity"]
-        O1[users\nemail ★ · status]
-        O2[app_assignments\nrole · last_used_at]
-        O3[groups\nmember_login]
+    subgraph OKTA["Okta — Identity"]
+        O1["users — email KEY, status"]
+        O2["app_assignments — role, last_used"]
     end
 
-    subgraph S3["GitHub  Code"]
-        G1[members\nemail ★ · role]
-        G2[commits\nauthor__email ★]
-        G3[tokens\nscope · last_used]
+    subgraph GITHUB["GitHub — Code"]
+        G1["members — email KEY, role"]
+        G2["commits — author__email KEY"]
     end
 
-    subgraph S4["Slack  Chat"]
-        SL1[members\nprofile__email ★]
-        SL2[channels\nname · num_members]
-        SL3[messages\nuser__profile__email]
+    subgraph SLACK["Slack — Chat"]
+        SL1["members — profile__email KEY"]
     end
 
-    subgraph S5["Stripe  Billing"]
-        ST1[customers\nemail ★]
-        ST2[subscriptions\nmonthly_amount_cents]
-        ST3[charges\nstatement_descriptor]
+    subgraph STRIPE["Stripe — Billing"]
+        ST1["customers — email KEY"]
+        ST2["subscriptions — monthly_amount"]
     end
 
-    subgraph CORAL["⚡  Coral — Apache DataFusion\nFederated executor · Local cache · Schema catalog"]
-        JOIN["JOIN on\nLOWER(a.email) = LOWER(b.email)\n★ = cross-source join key"]
-        EXEC["Execute\nfederated SELECT\n&lt; 1.4s end-to-end"]
+    subgraph CORAL["Coral — Apache DataFusion — MCP stdio"]
+        JOIN["JOIN on LOWER email across all sources"]
+        EXEC["Federated SELECT — under 1.4s"]
+        JOIN --> EXEC
     end
 
-    subgraph OUT["📊  Quartermaster output"]
-        F["7 zombie accounts\n$4,820/mo at risk\n47-node blast radius"]
-    end
+    OUT["7 zombie accounts — 4820/mo at risk"]
 
-    D1 & O1 & G1 & SL1 & ST1 -->|email join ★| JOIN
-    D2 & O2 & O3 & G2 & G3 & SL2 & SL3 & ST2 & ST3 --> EXEC
-    JOIN --> EXEC --> F
-
-    style CORAL fill:#0E1626,stroke:#5BD2C7,color:#5BD2C7
-    style OUT fill:#13213A,stroke:#E4B66B,color:#E4B66B
+    D1 & O1 & G1 & SL1 & ST1 -->|"email join KEY"| JOIN
+    D2 & O2 & G2 & ST2 --> EXEC
+    EXEC --> OUT
 ```
 
 **Data never leaves your machine.** Coral caches source rows locally. The orchestrator joins them at query time. Claude sees only column names and aggregate counts — never raw employee PII.
