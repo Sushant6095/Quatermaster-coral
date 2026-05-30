@@ -126,7 +126,10 @@ export function AuditTile({
 
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between border-t border-[var(--color-border)] pt-4">
-        <span className="text-[12px] text-[var(--color-text-dim)]">
+        <span
+          className="text-[12px] text-[var(--color-text-dim)]"
+          suppressHydrationWarning
+        >
           Last run {relativeTime(lastRunIso)} · {lastFindingCount ?? 0} findings
         </span>
         <Link

@@ -50,7 +50,10 @@ export function RecentRuns({ audits, limit = 5 }: RecentRunsProps) {
                   {a.name}
                 </span>
               </span>
-              <span className="shrink-0 font-mono text-[11px] text-[var(--color-text-dim)]">
+              <span
+                className="shrink-0 font-mono text-[11px] text-[var(--color-text-dim)]"
+                suppressHydrationWarning
+              >
                 {relativeTime(a.lastRunIso)} · {a.lastFindingCount ?? 0}
               </span>
             </Link>

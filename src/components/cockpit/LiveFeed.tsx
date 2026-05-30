@@ -128,7 +128,10 @@ export function LiveFeed({ items, isLive }: LiveFeedProps) {
               </div>
 
               {/* Timestamp */}
-              <span className="ml-auto shrink-0 font-mono text-[11px] text-[var(--color-text-dim)]">
+              <span
+                className="ml-auto shrink-0 font-mono text-[11px] text-[var(--color-text-dim)]"
+                suppressHydrationWarning
+              >
                 {formatClock(f.detectedIso)}
               </span>
             </motion.li>
