@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Anchor, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { QMLogo } from "@/components/brand/QMLogo";
 
 const REPO_URL = "https://github.com/Sushant6095/Quatermaster-coral";
 
@@ -119,10 +120,7 @@ export function LandingFooter() {
         {/* Giant wordmark banner */}
         <div className="select-none pb-8" aria-hidden="true">
           <div className="flex items-center gap-[0.06em] text-[clamp(3.5rem,19vw,17rem)] font-black leading-[0.82] tracking-[-0.04em] text-[var(--lp-ink)]">
-            <Anchor
-              className="h-[0.5em] w-[0.5em] shrink-0 text-[var(--lp-gold)]"
-              strokeWidth={2.5}
-            />
+            <QMLogo className="h-[0.55em] w-[0.55em] shrink-0 text-[var(--lp-gold)]" />
             <span className="leading-[0.82]">
               QUARTER
               <br />

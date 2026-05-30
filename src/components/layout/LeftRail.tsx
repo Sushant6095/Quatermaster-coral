@@ -13,9 +13,9 @@ import {
   Terminal,
   Cable,
   Settings,
-  Anchor,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { QMLogo } from "@/components/brand/QMLogo";
 
 interface NavItem {
   href: string;
@@ -64,13 +64,14 @@ export function LeftRail() {
 
   return (
     <aside className="hidden w-[240px] shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] md:flex">
-      {/* Logo */}
+      {/* Logo — links home */}
       <Link
-        href="/cockpit"
-        className="flex items-center gap-2.5 px-4 py-5 select-none"
+        href="/"
+        aria-label="Quartermaster home"
+        className="group flex select-none items-center gap-2.5 px-4 py-5"
       >
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-gold)]/15">
-          <Anchor className="h-4 w-4 text-[var(--color-gold)]" strokeWidth={2} />
+        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-gold)]/15 text-[var(--color-gold)] transition-transform group-hover:scale-105">
+          <QMLogo size={18} />
         </div>
         <div>
           <div className="text-[14px] font-semibold leading-tight text-[var(--color-gold)]">

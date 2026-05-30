@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Search, MessageSquare, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { ProfileMenu } from "./ProfileMenu";
+import { QMLogo } from "@/components/brand/QMLogo";
 
 interface SourcesHealth {
   ok: boolean;
@@ -55,6 +57,15 @@ export function TopBar() {
 
   return (
     <header className="flex h-[52px] shrink-0 items-center gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4">
+      {/* Home — primary "go home" affordance (only nav on mobile) */}
+      <Link
+        href="/"
+        aria-label="Quartermaster home"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--color-gold)] transition-colors hover:bg-[var(--color-card)]"
+      >
+        <QMLogo size={20} />
+      </Link>
+
       {/* Workspace switcher */}
       <button
         type="button"

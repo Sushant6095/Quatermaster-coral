@@ -4,12 +4,12 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Anchor, ChevronRight, Play } from "lucide-react";
-import { cn } from "@/lib/utils/cn";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { QMLogo } from "@/components/brand/QMLogo";
 
-// Procedural galleon — dynamically imported to avoid SSR + defer Three.js.
-const ShipThree = dynamic(
-  () => import("./ShipThree").then((m) => ({ default: m.ShipThree })),
+// Sketchfab GLB with procedural-galleon fallback — deferred, no SSR.
+const ShipModel = dynamic(
+  () => import("./ShipModel").then((m) => ({ default: m.ShipModel })),
   { ssr: false, loading: () => <ShipFallback /> }
 );
 
@@ -83,15 +83,14 @@ export function LandingHero() {
 
       {/* ── Nav ── */}
       <nav className="relative z-20 flex items-center justify-between px-6 py-5 md:px-12">
-        <div className="flex items-center gap-2.5">
-          <Anchor
-            className="h-5 w-5 text-[var(--lp-ink)]"
-            aria-hidden="true"
-          />
-          <span className="font-bold tracking-tight text-[var(--lp-ink)]">
-            QUARTERMASTER
-          </span>
-        </div>
+        <Link
+          href="/"
+          aria-label="Quartermaster home"
+          className="flex items-center gap-2.5 text-[var(--lp-ink)]"
+        >
+          <QMLogo size={22} />
+          <span className="font-bold tracking-tight">QUARTERMASTER</span>
+        </Link>
         <div className="flex items-center gap-6">
           <div className="hidden items-center gap-6 md:flex">
             {NAV_LINKS.map((l) => (
@@ -214,7 +213,7 @@ export function LandingHero() {
         {/* Right: 3D ship */}
         <div className="relative flex min-h-[360px] w-full flex-1 items-center justify-center md:min-h-screen md:w-auto">
           <div className="absolute inset-0 z-0" aria-hidden="true">
-            <ShipThree />
+            <ShipModel />
           </div>
         </div>
       </div>
