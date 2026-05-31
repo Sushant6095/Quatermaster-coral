@@ -170,17 +170,15 @@ export default function LedgerPage() {
             )}
           />
         </div>
-        <button
-          type="button"
+        <span
           className={cn(
             "inline-flex items-center gap-2 rounded-md border px-3 py-2 text-[13px]",
-            "border-[var(--color-border)] bg-[var(--color-card)]/60 text-[var(--color-text)]",
-            "hover:bg-[var(--color-card-hover)] hover:border-[var(--color-border-strong)] transition-colors"
+            "border-[var(--color-border)] bg-[var(--color-card)]/60 text-[var(--color-text-muted)]"
           )}
         >
           <Calendar className="h-4 w-4 text-[var(--color-text-muted)]" />
           May 1 – May 27
-        </button>
+        </span>
         <div className="flex flex-wrap items-center gap-1.5">
           {SOURCE_CHIPS.map(({ key, label, Icon, color }) => {
             const active = activeSources.has(key);
@@ -245,10 +243,11 @@ export default function LedgerPage() {
                 />
               ))
             )}
-            {!loading && filtered.length > 0 && (
+            {!loading && entries.length >= 100 && (
               <div className="mt-4 flex justify-center">
                 <button
                   type="button"
+                  onClick={() => setQuery("")}
                   className={cn(
                     "rounded-md px-4 py-1.5 font-mono text-[11px] uppercase tracking-wider",
                     "text-[var(--color-gold)] hover:bg-[var(--color-card)]/60 transition-colors"
@@ -262,7 +261,7 @@ export default function LedgerPage() {
         </div>
 
         {/* Evidence pack */}
-        {selected && <EvidencePack entry={selected} />}
+        {selected && <EvidencePack entry={selected} onExport={handleExport} />}
       </div>
     </div>
   );

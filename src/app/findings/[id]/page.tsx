@@ -2,6 +2,7 @@
 
 import { use, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import { FindingSlideOver } from "@/components/finding-detail/FindingSlideOver";
 import { BlastRadiusModal } from "@/components/finding-detail/BlastRadiusModal";
@@ -44,6 +45,58 @@ export default function FindingDetailPage({ params }: FindingDetailPageProps) {
     }
   }
 
+  /** PATCH the finding state (resolve / snooze) and surface the result. */
+  async function patchFinding(action: "resolve" | "snooze"): Promise<void> {
+    try {
+      const res = await fetch(`/api/findings/${finding.id}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (action === "resolve") {
+        toast.success("Finding marked resolved", {
+          description: "Removed from open findings and written to the audit trail.",
+        });
+        router.push("/findings");
+      } else {
+        toast("Snoozed for 7 days", {
+          description: "It will resurface in the live feed next week.",
+        });
+      }
+    } catch (err) {
+      toast.error("Could not update finding", {
+        description: err instanceof Error ? err.message : "Request failed",
+      });
+    }
+  }
+
+  /** POST a remediation decision (approve writes a signed ledger entry). */
+  async function remediate(
+    remediationId: string,
+    action: "approve" | "reject"
+  ): Promise<void> {
+    try {
+      const res = await fetch(`/api/findings/${finding.id}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ remediationId, action }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (action === "approve") {
+        toast.success("Remediation approved", {
+          description: "Action sent · signed entry written to the Ledger.",
+        });
+      } else {
+        toast("Remediation rejected", { description: "Draft dismissed." });
+      }
+    } catch (err) {
+      toast.error("Could not update remediation", {
+        description: err instanceof Error ? err.message : "Request failed",
+      });
+    }
+  }
+
   return (
     <div className="relative h-full">
       {/* Dimmed audit run shown behind the slide-over */}
@@ -74,6 +127,10 @@ export default function FindingDetailPage({ params }: FindingDetailPageProps) {
         onOpenChange={handleSlideOverChange}
         blastRadiusNodes={47}
         onBlastRadius={() => setBlastOpen(true)}
+        onSnooze={() => patchFinding("snooze")}
+        onResolve={() => patchFinding("resolve")}
+        onApprove={(rid) => remediate(rid, "approve")}
+        onReject={(rid) => remediate(rid, "reject")}
       />
 
       <BlastRadiusModal

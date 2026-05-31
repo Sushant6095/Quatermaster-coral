@@ -41,16 +41,8 @@ function highlightSQL(sql: string): string {
   return sql.replace(regex, (m) => `<span style="color:var(--color-sea);font-weight:600">${m}</span>`);
 }
 
-// ── Fixture result rows ───────────────────────────────────────────────────────
-type FixtureRow = Record<string, string | number | boolean | null>;
-
-const FIXTURE_ROWS: FixtureRow[] = [
-  { work_email: "alice@acme.com",  full_name: "Alice Nguyen",   login: "alice-gh",   role: "admin",  last_active_at: "2024-01-12" },
-  { work_email: "bob@acme.com",    full_name: "Bob Patel",      login: "bobp",       role: "member", last_active_at: "2023-11-04" },
-  { work_email: "carol@acme.com",  full_name: "Carol Smith",    login: null,         role: null,     last_active_at: null },
-  { work_email: "dave@acme.com",   full_name: "Dave Kim",       login: "davekim",    role: "member", last_active_at: "2024-02-28" },
-  { work_email: "eve@acme.com",    full_name: "Eve Johansson",  login: "eveJ",       role: "admin",  last_active_at: "2023-09-15" },
-];
+// ── Result rows (shape returned by Coral) ─────────────────────────────────────
+type ResultRow = Record<string, unknown>;
 
 // ── Join SQL template builder ─────────────────────────────────────────────────
 function buildJoinSQL(joinParam: string): string {
@@ -80,8 +72,9 @@ function PlaygroundInner() {
 
   const [sql, setSQL]           = useState(defaultSQL);
   const [running, setRunning]   = useState(false);
-  const [rows, setRows]         = useState<FixtureRow[] | null>(null);
+  const [rows, setRows]         = useState<ResultRow[] | null>(null);
   const [elapsed, setElapsed]   = useState<number | null>(null);
+  const [error, setError]       = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const textareaRef             = useRef<HTMLTextAreaElement>(null);
 
@@ -90,18 +83,39 @@ function PlaygroundInner() {
     if (joinParam) setSQL(buildJoinSQL(joinParam));
   }, [joinParam]);
 
-  const runQuery = useCallback(() => {
+  const runQuery = useCallback(async () => {
     if (running) return;
     setRunning(true);
     setRows(null);
+    setError(null);
     const t0 = Date.now();
-    // Simulate ~600ms execution with fixture data
-    setTimeout(() => {
-      setRows(FIXTURE_ROWS);
+    try {
+      const res = await fetch("/api/playground/run", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ sql }),
+      });
+      const data = (await res.json()) as {
+        ok: boolean;
+        rows?: ResultRow[];
+        durationMs?: number;
+        error?: string;
+      };
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error ?? `Query failed (HTTP ${res.status})`);
+      }
+      setRows(data.rows ?? []);
+      setElapsed(
+        typeof data.durationMs === "number" ? data.durationMs : Date.now() - t0
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Query failed");
+      setRows([]);
       setElapsed(Date.now() - t0);
+    } finally {
       setRunning(false);
-    }, 580);
-  }, [running]);
+    }
+  }, [running, sql]);
 
   // ⌘↵ to run
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -254,9 +268,14 @@ function PlaygroundInner() {
           <span style={{ fontSize: 10, color: "var(--color-text-dim)", fontFamily: "var(--font-geist-mono, monospace)" }}>
             {lines.length} lines
           </span>
-          {elapsed !== null && (
+          {elapsed !== null && !error && (
             <span style={{ fontSize: 10, color: "var(--color-lime)", fontFamily: "var(--font-geist-mono, monospace)" }}>
-              {elapsed}ms · {FIXTURE_ROWS.length} rows
+              {elapsed}ms · {rows?.length ?? 0} rows
+            </span>
+          )}
+          {error && (
+            <span style={{ fontSize: 10, color: "var(--color-coral)", fontFamily: "var(--font-geist-mono, monospace)" }}>
+              {error}
             </span>
           )}
         </div>
@@ -278,10 +297,23 @@ function PlaygroundInner() {
             </div>
           )}
 
-          {!running && rows === null && (
+          {!running && rows === null && !error && (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 8 }}>
               <span style={{ fontSize: 28, opacity: 0.3 }}>⌘↵</span>
               <span style={{ fontSize: 12, color: "var(--color-text-dim)" }}>Run a query to see results</span>
+            </div>
+          )}
+
+          {!running && error && (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 8, padding: "0 20px" }}>
+              <span style={{ fontSize: 18, opacity: 0.4 }}>⚠</span>
+              <span style={{ fontSize: 12, color: "var(--color-coral)", textAlign: "center", fontFamily: "var(--font-geist-mono, monospace)" }}>{error}</span>
+            </div>
+          )}
+
+          {!running && !error && rows !== null && rows.length === 0 && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+              <span style={{ fontSize: 12, color: "var(--color-text-dim)" }}>0 rows returned</span>
             </div>
           )}
 

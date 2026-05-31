@@ -22,6 +22,8 @@ interface FindingSlideOverProps {
   onBlastRadius?: () => void;
   onSnooze?: () => void;
   onResolve?: () => void;
+  onApprove?: (remediationId: string) => void;
+  onReject?: (remediationId: string) => void;
 }
 
 function severityLabel(s: Severity): string {
@@ -52,6 +54,8 @@ export function FindingSlideOver({
   onBlastRadius,
   onSnooze,
   onResolve,
+  onApprove,
+  onReject,
 }: FindingSlideOverProps) {
   const days = offboardedDays(finding);
 
@@ -182,7 +186,12 @@ export function FindingSlideOver({
                     </h3>
                     <div className="mt-2 space-y-3">
                       {finding.draftedActions.map((d) => (
-                        <RemediationDraftCard key={d.id} draft={d} />
+                        <RemediationDraftCard
+                          key={d.id}
+                          draft={d}
+                          onApprove={onApprove}
+                          onReject={onReject}
+                        />
                       ))}
                     </div>
                   </section>

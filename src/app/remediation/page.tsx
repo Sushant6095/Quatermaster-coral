@@ -177,6 +177,27 @@ export default function RemediationPage() {
   const [severityFilters, setSeverityFilters] = useState<Set<Severity>>(
     new Set(["P0", "P1", "P2"])
   );
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  /** Append a signed Ledger entry for an approved draft. */
+  const logApproval = (d: DraftRow): void => {
+    void fetch("/api/ledger", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        actor: "user",
+        action: `Approved drafted action for ${d.target}`,
+        source:
+          d.channel === "slack-dm" ? "slack" : d.channel === "jira" ? "github" : "system",
+        principalEmail: d.target.includes("@") ? d.target : undefined,
+        rawPayload: { draftId: d.id, channel: d.channel, body: d.body },
+      }),
+    }).catch(() => undefined);
+  };
+
+  const updateBody = (id: string, body: string): void => {
+    setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, body } : d)));
+  };
 
   const visible = useMemo(
     () =>
@@ -210,11 +231,14 @@ export default function RemediationPage() {
   };
 
   const approveAll = (): void => {
-    const ids = visible.map((d) => d.id);
+    const targets = visible;
+    const ids = targets.map((d) => d.id);
     setDrafts((prev) =>
       prev.map((d) => (ids.includes(d.id) ? { ...d, state: "approved" } : d))
     );
-    toast.success(`Approved ${ids.length} drafts.`);
+    // Write a signed Ledger entry per approved draft (same as single Approve).
+    for (const d of targets) logApproval(d);
+    toast.success(`Approved ${ids.length} drafts · written to the Ledger.`);
     if (ids.length >= 10) {
       fireConfetti();
     }
@@ -327,34 +351,37 @@ export default function RemediationPage() {
                     Drafted {d.draftedMinutesAgo}m ago
                   </span>
                 </div>
-                <p className="mt-3 rounded-md bg-[var(--color-code-bg)]/40 p-3 font-mono text-[12px] leading-relaxed text-[var(--color-text)]">
-                  {d.body}
-                </p>
+                {editingId === d.id ? (
+                  <textarea
+                    value={d.body}
+                    onChange={(e) => updateBody(d.id, e.target.value)}
+                    rows={4}
+                    className="mt-3 w-full resize-none rounded-md border border-[var(--color-border)] bg-[var(--color-code-bg)] p-3 font-mono text-[12px] leading-relaxed text-[var(--color-text)] focus:outline-none focus:ring-1 focus:ring-[var(--color-gold)]"
+                  />
+                ) : (
+                  <p className="mt-3 rounded-md bg-[var(--color-code-bg)]/40 p-3 font-mono text-[12px] leading-relaxed text-[var(--color-text)]">
+                    {d.body}
+                  </p>
+                )}
                 <div className="mt-3 flex items-center gap-2">
                   <button
                     onClick={() => {
                       updateDraft(d.id, "approved");
+                      setEditingId(null);
                       toast.success(`Sent ${CHANNEL_LABEL[d.channel]} for ${d.target}.`);
-                      fetch("/api/ledger", {
-                        method: "POST",
-                        headers: { "content-type": "application/json" },
-                        body: JSON.stringify({
-                          actor: "user",
-                          action: `Approved drafted action for ${d.target}`,
-                          source: d.channel === "slack-dm" ? "slack" : d.channel === "jira" ? "github" : "system",
-                          principalEmail: d.target.includes("@") ? d.target : undefined,
-                          rawPayload: { draftId: d.id, channel: d.channel, body: d.body },
-                        }),
-                      }).catch(() => undefined);
+                      logApproval(d);
                     }}
                     className="flex items-center gap-1.5 rounded-md bg-[var(--color-gold)] px-3 py-1.5 text-[11px] font-medium text-black hover:bg-[var(--color-gold-hover)]"
                   >
                     <Check className="h-3 w-3" />
                     Approve
                   </button>
-                  <button className="flex items-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-[11px] text-[var(--color-text-muted)] hover:bg-[var(--color-card-hover)] hover:text-[var(--color-text)]">
+                  <button
+                    onClick={() => setEditingId(editingId === d.id ? null : d.id)}
+                    className="flex items-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-[11px] text-[var(--color-text-muted)] hover:bg-[var(--color-card-hover)] hover:text-[var(--color-text)]"
+                  >
                     <Edit3 className="h-3 w-3" />
-                    Edit
+                    {editingId === d.id ? "Done" : "Edit"}
                   </button>
                   <button
                     onClick={() => updateDraft(d.id, "rejected")}

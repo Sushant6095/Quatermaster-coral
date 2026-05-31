@@ -8,7 +8,9 @@
  */
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { RefreshCw, Settings2 } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import type { ConnectionStatus, SourceKey } from "@/lib/types";
 
@@ -47,6 +49,21 @@ function formatRelative(iso: string | undefined): string {
 export default function SourcesPage() {
   const [sources, setSources] = useState<ConnectionStatus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  /** Re-fetch connection health (wired to the Re-sync buttons). */
+  async function reload(label: string): Promise<void> {
+    try {
+      const res = await fetch("/api/sources/health");
+      const json = (await res.json()) as {
+        ok: boolean;
+        sources: ConnectionStatus[];
+      };
+      setSources(json.sources ?? []);
+      toast.success(`Re-synced ${label}`);
+    } catch {
+      toast.error("Re-sync failed");
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -137,14 +154,21 @@ export default function SourcesPage() {
               </div>
 
               <div className="mt-4 flex items-center gap-2">
-                <button className="flex items-center gap-1.5 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[11px] text-[var(--color-text-muted)] hover:bg-[var(--color-card-hover)] hover:text-[var(--color-text)]">
+                <button
+                  type="button"
+                  onClick={() => reload(SOURCE_LABELS[s.source])}
+                  className="flex items-center gap-1.5 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[11px] text-[var(--color-text-muted)] hover:bg-[var(--color-card-hover)] hover:text-[var(--color-text)]"
+                >
                   <RefreshCw className="h-3 w-3" />
                   Re-sync
                 </button>
-                <button className="flex items-center gap-1.5 px-2 py-1 text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-text)]">
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-1.5 px-2 py-1 text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                >
                   <Settings2 className="h-3 w-3" />
                   Manage
-                </button>
+                </Link>
               </div>
             </div>
           ))}

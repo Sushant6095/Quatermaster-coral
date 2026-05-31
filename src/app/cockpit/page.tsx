@@ -10,6 +10,8 @@
  */
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   ShieldAlert,
   KeyRound,
@@ -44,9 +46,70 @@ const AUDIT_ICONS: Record<AuditId, LucideIcon> = {
 const MAX_FEED_ITEMS = 50;
 
 export default function CockpitPage() {
+  const router = useRouter();
   const stats = mockCockpitStats;
   const [continuous, setContinuous] = useState<boolean>(true);
   const [liveFeed, setLiveFeed] = useState<Finding[]>(mockLiveFeed);
+  const [runningAll, setRunningAll] = useState<boolean>(false);
+
+  /** Re-check source connection health. */
+  async function refreshSources(): Promise<void> {
+    try {
+      const res = await fetch("/api/sources/health");
+      const data = (await res.json()) as {
+        ok?: boolean;
+        sources?: Array<{ status: string }>;
+      };
+      const sources = data.sources ?? [];
+      const healthy = sources.filter((s) => s.status === "healthy").length;
+      toast.success("Sources refreshed", {
+        description: sources.length
+          ? `${healthy}/${sources.length} sources healthy.`
+          : "Connection health re-checked.",
+      });
+    } catch (err) {
+      toast.error("Refresh failed", {
+        description: err instanceof Error ? err.message : "Could not reach sources.",
+      });
+    }
+  }
+
+  /** Run every named audit through the streaming runner. */
+  async function runAllAudits(): Promise<void> {
+    if (runningAll) return;
+    setRunningAll(true);
+    const ids = mockAudits.map((a) => a.id);
+    const tid = toast.loading(`Running audits… 0/${ids.length}`);
+    try {
+      for (let i = 0; i < ids.length; i++) {
+        const res = await fetch("/api/audits/run", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ auditId: ids[i] }),
+        });
+        // Drain the SSE stream so each audit actually completes server-side.
+        const reader = res.body?.getReader();
+        if (reader) {
+          while (true) {
+            const { done } = await reader.read();
+            if (done) break;
+          }
+        }
+        toast.loading(`Running audits… ${i + 1}/${ids.length}`, { id: tid });
+      }
+      toast.success(`All ${ids.length} audits complete`, {
+        id: tid,
+        description: "New findings stream into the live feed below.",
+      });
+    } catch (err) {
+      toast.error("Run failed", {
+        id: tid,
+        description: err instanceof Error ? err.message : "Audit run errored.",
+      });
+    } finally {
+      setRunningAll(false);
+    }
+  }
 
   useEffect(() => {
     if (!continuous) return;
@@ -92,6 +155,7 @@ export default function CockpitPage() {
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={refreshSources}
             className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-transparent px-3 py-1.5 text-[13px] font-medium text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-border-strong)] hover:bg-[var(--color-card)] hover:text-[var(--color-text)]"
           >
             <RefreshCw className="h-3.5 w-3.5" />
@@ -99,10 +163,12 @@ export default function CockpitPage() {
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-gold)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-bg)] transition-colors hover:bg-[var(--color-gold-hover)]"
+            onClick={runAllAudits}
+            disabled={runningAll}
+            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-gold)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-bg)] transition-colors hover:bg-[var(--color-gold-hover)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <PlayCircle className="h-3.5 w-3.5" />
-            Run All
+            {runningAll ? "Running…" : "Run All"}
           </button>
         </div>
       </header>
@@ -140,6 +206,7 @@ export default function CockpitPage() {
                   {...a}
                   icon={AUDIT_ICONS[a.id]}
                   index={i}
+                  onRun={(auditId) => router.push(`/audits/${auditId}`)}
                 />
               ))}
             </div>

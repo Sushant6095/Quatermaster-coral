@@ -118,9 +118,9 @@ export function LandingFooter() {
         </div>
 
         {/* Giant wordmark banner */}
-        <div className="select-none pb-8" aria-hidden="true">
-          <div className="flex items-center gap-[0.06em] text-[clamp(3.5rem,19vw,17rem)] font-black leading-[0.82] tracking-[-0.04em] text-[var(--lp-ink)]">
-            <QMLogo className="h-[0.55em] w-[0.55em] shrink-0 text-[var(--lp-gold)]" />
+        <div className="select-none overflow-hidden pb-8" aria-hidden="true">
+          <div className="flex max-w-full items-center gap-[0.05em] text-[clamp(2.25rem,12vw,12rem)] font-black leading-[0.82] tracking-[-0.04em] text-[var(--lp-ink)]">
+            <QMLogo className="h-[0.5em] w-[0.5em] shrink-0 text-[var(--lp-gold)]" />
             <span className="leading-[0.82]">
               QUARTER
               <br />
