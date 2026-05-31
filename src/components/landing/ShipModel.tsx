@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ShipThree } from "./ShipThree";
-import { addOcean } from "./oceanScene";
 
 /**
  * ShipModel — loads a GLB hero ship from /public/models/exploration-bark.glb
@@ -68,8 +67,6 @@ export function ShipModel() {
       gold.position.set(3.5, 3, -1);
       scene.add(gold);
 
-      const ocean = addOcean(THREE, scene);
-
       const pivot = new THREE.Group();
       scene.add(pivot);
 
@@ -109,7 +106,6 @@ export function ShipModel() {
         pivot.rotation.y = t * 0.3;
         pivot.position.y = Math.sin(t * 0.9) * 0.08;
         pivot.rotation.z = Math.sin(t * 0.5) * 0.03;
-        ocean.update(t);
         renderer.render(scene, camera);
       }
       animate();
@@ -126,7 +122,6 @@ export function ShipModel() {
       cleanupFn = () => {
         cancelAnimationFrame(animId);
         ro.disconnect();
-        ocean.dispose();
         draco.dispose();
         pmrem.dispose();
         renderer.dispose();
