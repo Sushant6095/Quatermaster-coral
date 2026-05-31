@@ -1,15 +1,22 @@
 # 3D models
 
-The hero ship loads `exploration-bark.glb` from this folder.
+The hero ship (`ShipModel`) loads **`exploration-bark.glb`** from this folder.
+When the file is present it loads automatically (Draco/Meshopt-compressed GLBs
+are supported); until then the hero falls back to the procedural `ShipThree`.
 
-## To use the Sketchfab "Exploration Bark" model
+## Generate a GLB from the hero artwork (image → 3D)
 
-1. Open the model:
-   https://sketchfab.com/3d-models/exploration-bark-4fd8d8ab344f4a71a9dd8946b475c5b7
-2. Click **Download 3D Model** → choose the **glTF Binary (.glb)** option
-   (a free Sketchfab account is required; check the model's license — credit
-   the author per its CC terms).
-3. Save the file here as **`exploration-bark.glb`** (exact name).
+I can't run image-to-3D here, so generate it with a free tool and drop the file in:
 
-When the file is present, `ShipModel` loads it automatically. Until then, the
-hero falls back to the procedural galleon (`ShipThree`) — no broken state.
+1. Open an image-to-3D generator:
+   - **Meshy** — https://www.meshy.ai (Image to 3D)
+   - **Tripo** — https://www.tripo3d.ai
+   - **Luma Genie** — https://lumalabs.ai/genie
+2. Upload the hero image, generate, and **download as GLB** (glTF Binary).
+   - If asked, enable texture/PBR export. Draco or Meshopt compression is fine.
+3. Save it here as exactly **`exploration-bark.glb`**.
+4. Commit + push — it swaps into the hero automatically (centered, scaled,
+   rested on the sea, slow-rotating in the dark starfield scene).
+
+If the model loads facing the wrong way or too big/small, tell me and I'll tweak
+the rotation/scale in `src/components/landing/ShipModel.tsx`.
