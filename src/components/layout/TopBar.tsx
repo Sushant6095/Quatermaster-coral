@@ -44,7 +44,7 @@ export function TopBar() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        // TODO: open command palette
+        window.location.href = "/copilot";
       }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "j") {
         e.preventDefault();
@@ -69,6 +69,9 @@ export function TopBar() {
       {/* Workspace switcher */}
       <button
         type="button"
+        onClick={() => {
+          window.location.href = "/settings";
+        }}
         className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-[13px] transition-colors hover:bg-[var(--color-card)]"
       >
         <span className="flex h-5 w-5 items-center justify-center rounded bg-[var(--color-gold)] text-[10px] font-bold text-[var(--color-bg)]">
@@ -82,8 +85,11 @@ export function TopBar() {
       <div className="flex flex-1 justify-center">
         <button
           type="button"
+          onClick={() => {
+            window.location.href = "/copilot";
+          }}
           className="flex h-9 w-full max-w-[420px] items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-card)]/40 px-3 transition-colors hover:bg-[var(--color-card)]/70"
-          aria-label="Open command palette (⌘K)"
+          aria-label="Search / ask Copilot (⌘K)"
         >
           <Search className="h-3.5 w-3.5 shrink-0 text-[var(--color-text-dim)]" />
           <span className="flex-1 text-left text-[13px] text-[var(--color-text-dim)]">

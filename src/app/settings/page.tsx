@@ -250,7 +250,16 @@ function DangerZone() {
         Permanently delete the local workspace. All audits, findings, and ledger
         entries will be lost.
       </p>
-      <button className="mt-3 rounded-md border border-[var(--color-coral)]/60 px-3 py-1.5 text-xs font-medium text-[var(--color-coral)] hover:bg-[var(--color-coral)]/10">
+      <button
+        type="button"
+        onClick={() =>
+          toast.error("Workspace deletion is disabled in the demo", {
+            description:
+              "Quartermaster runs locally — clear .qm-state.db to reset instead.",
+          })
+        }
+        className="mt-3 rounded-md border border-[var(--color-coral)]/60 px-3 py-1.5 text-xs font-medium text-[var(--color-coral)] hover:bg-[var(--color-coral)]/10"
+      >
         Delete workspace
       </button>
     </div>

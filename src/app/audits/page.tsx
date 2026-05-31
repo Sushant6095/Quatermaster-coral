@@ -186,10 +186,13 @@ export default function AuditsLibraryPage() {
                     Run audit
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
-                  <button className="flex items-center gap-1.5 text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-text)]">
+                  <Link
+                    href="/ledger"
+                    className="flex items-center gap-1.5 text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                  >
                     <History className="h-3 w-3" />
                     View history
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
