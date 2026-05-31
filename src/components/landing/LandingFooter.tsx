@@ -36,7 +36,7 @@ const SOCIALS = [
 
 export function LandingFooter() {
   return (
-    <footer className="lp-light relative overflow-hidden bg-[var(--lp-surface-2)]">
+    <footer className="relative overflow-hidden bg-[var(--color-surface)]">
       {/* Transition from the dark sections above */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-32"
@@ -53,7 +53,7 @@ export function LandingFooter() {
           <div>
             <Link
               href="/cockpit"
-              className="group inline-flex items-center gap-2 text-2xl font-bold tracking-tight text-[var(--lp-ink)]"
+              className="group inline-flex items-center gap-2 text-2xl font-bold tracking-tight text-[var(--color-text)]"
             >
               Start building
               <ChevronRight
@@ -61,7 +61,7 @@ export function LandingFooter() {
                 aria-hidden="true"
               />
             </Link>
-            <p className="mt-3 max-w-xs text-sm text-[var(--lp-ink-soft)]">
+            <p className="mt-3 max-w-xs text-sm text-[var(--color-text-muted)]">
               Run the full audit locally in one command. PII never leaves your
               machine.
             </p>
@@ -70,7 +70,7 @@ export function LandingFooter() {
           <div className="flex flex-wrap gap-12">
             {NAV_COLUMNS.map((col) => (
               <nav key={col.heading} className="flex flex-col gap-3">
-                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--lp-ink-dim)]">
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-dim)]">
                   {col.heading}
                 </span>
                 {col.links.map((l) =>
@@ -80,7 +80,7 @@ export function LandingFooter() {
                       href={l.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-[var(--lp-ink-soft)] transition-colors hover:text-[var(--lp-ink)]"
+                      className="text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
                     >
                       {l.label}
                     </a>
@@ -88,7 +88,7 @@ export function LandingFooter() {
                     <Link
                       key={l.label}
                       href={l.href}
-                      className="text-sm text-[var(--lp-ink-soft)] transition-colors hover:text-[var(--lp-ink)]"
+                      className="text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
                     >
                       {l.label}
                     </Link>
@@ -98,7 +98,7 @@ export function LandingFooter() {
             ))}
 
             <div className="flex flex-col gap-3">
-              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--lp-ink-dim)]">
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-dim)]">
                 Community
               </span>
               {SOCIALS.map((s) => (
@@ -107,9 +107,9 @@ export function LandingFooter() {
                   href={s.href}
                   target={s.href.startsWith("http") ? "_blank" : undefined}
                   rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="flex items-center gap-2 text-sm text-[var(--lp-ink-soft)] transition-colors hover:text-[var(--lp-ink)]"
+                  className="flex items-center gap-2 text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
                 >
-                  <BrandLogo name={s.name} size={16} colored />
+                  <BrandLogo name={s.name} size={16} />
                   {s.label}
                 </a>
               ))}
@@ -119,8 +119,8 @@ export function LandingFooter() {
 
         {/* Giant wordmark banner */}
         <div className="select-none overflow-hidden pb-8" aria-hidden="true">
-          <div className="flex max-w-full items-center gap-[0.05em] text-[clamp(2.25rem,12vw,12rem)] font-black leading-[0.82] tracking-[-0.04em] text-[var(--lp-ink)]">
-            <QMLogo className="h-[0.5em] w-[0.5em] shrink-0 text-[var(--lp-gold)]" />
+          <div className="flex max-w-full items-center gap-[0.05em] text-[clamp(2.25rem,12vw,12rem)] font-black leading-[0.82] tracking-[-0.04em] text-[var(--color-text)]">
+            <QMLogo className="h-[0.5em] w-[0.5em] shrink-0 text-[var(--color-gold)]" />
             <span className="leading-[0.82]">
               QUARTER
               <br />
@@ -130,7 +130,7 @@ export function LandingFooter() {
         </div>
 
         {/* Fine print */}
-        <div className="flex flex-col items-start justify-between gap-2 pb-6 text-xs text-[var(--lp-ink-dim)] sm:flex-row sm:items-center">
+        <div className="flex flex-col items-start justify-between gap-2 pb-6 text-xs text-[var(--color-text-dim)] sm:flex-row sm:items-center">
           <span>Quartermaster · Local-first SaaS audit agent</span>
           <span>Pirates of the Coral-bean · Track 1 · Coral + Claude</span>
         </div>
@@ -141,7 +141,7 @@ export function LandingFooter() {
         className="relative z-10 h-6 w-full"
         style={{
           backgroundImage:
-            "repeating-conic-gradient(var(--lp-ink) 0% 25%, transparent 0% 50%)",
+            "repeating-conic-gradient(var(--color-text) 0% 25%, transparent 0% 50%)",
           backgroundSize: "24px 24px",
         }}
         aria-hidden="true"
