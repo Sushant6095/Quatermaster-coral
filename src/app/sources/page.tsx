@@ -12,6 +12,7 @@ import Link from "next/link";
 import { RefreshCw, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
+import { useTimelineReveal } from "@/lib/anime/useAnime";
 import type { ConnectionStatus, SourceKey } from "@/lib/types";
 
 const SOURCE_LABELS: Record<SourceKey, string> = {
@@ -49,6 +50,7 @@ function formatRelative(iso: string | undefined): string {
 export default function SourcesPage() {
   const [sources, setSources] = useState<ConnectionStatus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const gridRef = useTimelineReveal<HTMLDivElement>({ stagger: 60, y: 18 });
 
   /** Re-fetch connection health (wired to the Re-sync buttons). */
   async function reload(label: string): Promise<void> {
@@ -103,10 +105,11 @@ export default function SourcesPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div ref={gridRef} className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {sources.map((s) => (
             <div
               key={s.source}
+              data-animate
               className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-5"
             >
               <div className="flex items-start justify-between">

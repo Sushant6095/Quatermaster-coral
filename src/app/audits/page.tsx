@@ -23,6 +23,7 @@ import type { LucideIcon } from "lucide-react";
 import { mockAudits } from "@/lib/fixtures/cockpit";
 import { cn } from "@/lib/utils/cn";
 import type { AuditCategory, AuditId, SourceKey } from "@/lib/types";
+import { useTimelineReveal } from "@/lib/anime/useAnime";
 
 const AUDIT_ICONS: Record<AuditId, LucideIcon> = {
   "QM-01": ShieldAlert,
@@ -68,6 +69,7 @@ function formatRelative(iso: string | undefined): string {
 }
 
 export default function AuditsLibraryPage() {
+  const gridRef = useTimelineReveal<HTMLDivElement>({ stagger: 60, y: 18 });
   const [filter, setFilter] = useState<"all" | AuditCategory>("all");
 
   const filtered =
@@ -102,12 +104,13 @@ export default function AuditsLibraryPage() {
       </div>
 
       {/* Cards */}
-      <div className="flex flex-col gap-4">
+      <div ref={gridRef} className="flex flex-col gap-4">
         {filtered.map((audit) => {
           const Icon = AUDIT_ICONS[audit.id];
           return (
             <div
               key={audit.id}
+              data-animate
               className="group rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-6 transition-colors hover:border-[var(--color-gold)]/40 hover:bg-[var(--color-card-hover)]"
             >
               <div className="flex items-start justify-between gap-6">

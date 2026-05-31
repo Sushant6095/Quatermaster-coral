@@ -28,7 +28,7 @@
     "@splinetool/runtime": "^1.12.95",
     "@types/three": "^0.184.1",
     "@xyflow/react": "^12.4.0",
-    "animejs": "^3.2.2",
+    "animejs": "^4.4.1",
     "better-sqlite3": "^11.7.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

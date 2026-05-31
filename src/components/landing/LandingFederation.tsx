@@ -68,42 +68,30 @@ export function LandingFederation() {
     let cancelled = false;
 
     async function animateLines() {
-      const animeModule = await import("animejs");
-      const anime = animeModule.default;
+      const { animate, svg, stagger } = await import("animejs");
       if (cancelled) return;
 
       const sourcePaths = pathRefs.current.filter(Boolean) as SVGPathElement[];
       const resultPath = resultPathRef.current;
 
-      // Set initial state
-      sourcePaths.forEach((p) => {
-        const len = p.getTotalLength();
-        p.style.strokeDasharray = String(len);
-        p.style.strokeDashoffset = String(len);
-      });
-      if (resultPath) {
-        const len = resultPath.getTotalLength();
-        resultPath.style.strokeDasharray = String(len);
-        resultPath.style.strokeDashoffset = String(len);
-      }
-
-      anime({
-        targets: sourcePaths,
-        strokeDashoffset: [anime.setDashoffset, 0],
-        easing: "easeInOutSine",
+      // Draw the source → Coral lines (createDrawable handles the dash math).
+      const drawables = sourcePaths.flatMap((p) => svg.createDrawable(p));
+      animate(drawables, {
+        draw: ["0 0", "0 1"],
+        ease: "inOutSine",
         duration: 1200,
-        delay: anime.stagger(150),
+        delay: stagger(150),
       });
 
-      setTimeout(() => {
-        if (cancelled || !resultPath) return;
-        anime({
-          targets: resultPath,
-          strokeDashoffset: [anime.setDashoffset, 0],
-          easing: "easeInOutSine",
+      if (resultPath) {
+        const [resultDrawable] = svg.createDrawable(resultPath);
+        animate(resultDrawable, {
+          draw: ["0 0", "0 1"],
+          ease: "inOutSine",
           duration: 800,
+          delay: SOURCES.length * 150 + 400,
         });
-      }, SOURCES.length * 150 + 400);
+      }
     }
 
     animateLines();

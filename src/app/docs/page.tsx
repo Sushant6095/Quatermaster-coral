@@ -12,6 +12,7 @@ import { QMLogo } from "@/components/brand/QMLogo";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { MermaidDiagram } from "@/components/docs/MermaidDiagram";
 import { mockAudits } from "@/lib/fixtures/cockpit";
+import { useScrollReveal } from "@/lib/anime/useAnime";
 import { cn } from "@/lib/utils/cn";
 
 interface Section {
@@ -169,6 +170,7 @@ const AUDIT_BLURB: Record<string, string> = {
 
 export default function DocsPage() {
   const [active, setActive] = useState<string>(SECTIONS[0].id);
+  const revealRef = useScrollReveal<HTMLElement>({ y: 28, duration: 760 });
 
   // Smooth anchor scrolling for the duration of this page.
   useEffect(() => {
@@ -260,7 +262,7 @@ export default function DocsPage() {
 
         {/* Main content */}
         <main className="min-w-0 flex-1 py-10">
-          <article className="max-w-3xl">
+          <article ref={revealRef} className="max-w-3xl">
             <Section id="overview" title="Quartermaster">
               <p className="lead">
                 Quartermaster joins your HRIS, identity provider, code platform,
@@ -426,6 +428,7 @@ function Section({
   return (
     <section
       id={id}
+      data-reveal
       className="scroll-mt-24 border-t border-[var(--lp-border)] py-10 first:border-t-0 first:pt-0 [&_p]:mt-4 [&_p]:text-[15px] [&_p]:leading-relaxed [&_p]:text-[var(--lp-ink-soft)] [&_.lead]:text-[18px] [&_.lead]:text-[var(--lp-ink)] [&_strong]:text-[var(--lp-ink)] [&_strong]:font-semibold"
     >
       <h2 className="text-[26px] font-bold tracking-tight text-[var(--lp-ink)]">

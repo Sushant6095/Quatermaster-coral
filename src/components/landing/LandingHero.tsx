@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Anchor, ChevronRight, Play } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { QMLogo } from "@/components/brand/QMLogo";
+import { useAnimatablePointer } from "@/lib/anime/useAnime";
 
 // Sketchfab GLB with procedural-galleon fallback — deferred, no SSR.
 const ShipModel = dynamic(
@@ -36,20 +37,19 @@ const NAV_LINKS = [
 
 export function LandingHero() {
   const revealRef = useRef<HTMLDivElement>(null);
+  const shipRef = useAnimatablePointer<HTMLDivElement>(18);
 
   useEffect(() => {
     let cancelled = false;
     async function run() {
-      const animeModule = await import("animejs");
-      const anime = animeModule.default;
+      const { animate, stagger } = await import("animejs");
       if (cancelled || !revealRef.current) return;
-      anime({
-        targets: revealRef.current.querySelectorAll("[data-reveal]"),
+      animate(revealRef.current.querySelectorAll("[data-reveal]"), {
         opacity: [0, 1],
         translateY: [24, 0],
-        easing: "easeOutExpo",
+        ease: "outExpo",
         duration: 850,
-        delay: anime.stagger(90),
+        delay: stagger(90),
       });
     }
     run();
@@ -212,7 +212,10 @@ export function LandingHero() {
         </div>
 
         {/* Right: 3D ship */}
-        <div className="relative flex min-h-[360px] w-full flex-1 items-center justify-center md:min-h-screen md:w-auto">
+        <div
+          ref={shipRef}
+          className="relative flex min-h-[360px] w-full flex-1 items-center justify-center md:min-h-screen md:w-auto"
+        >
           <div className="absolute inset-0 z-0" aria-hidden="true">
             <ShipModel />
           </div>

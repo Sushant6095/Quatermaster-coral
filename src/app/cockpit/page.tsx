@@ -32,6 +32,7 @@ import {
   mockCockpitStats,
   mockLiveFeed,
 } from "@/lib/fixtures/cockpit";
+import { useTimelineReveal } from "@/lib/anime/useAnime";
 import type { AuditId, Finding } from "@/lib/types";
 
 /** Lucide icon per audit — kept in one place so the grid stays declarative. */
@@ -47,6 +48,7 @@ const MAX_FEED_ITEMS = 50;
 
 export default function CockpitPage() {
   const router = useRouter();
+  const revealRef = useTimelineReveal<HTMLDivElement>({ stagger: 70 });
   const stats = mockCockpitStats;
   const [continuous, setContinuous] = useState<boolean>(true);
   const [liveFeed, setLiveFeed] = useState<Finding[]>(mockLiveFeed);
@@ -141,9 +143,12 @@ export default function CockpitPage() {
   }, [continuous]);
 
   return (
-    <div className="mx-auto max-w-[1400px] px-6 py-6">
+    <div ref={revealRef} className="mx-auto max-w-[1400px] px-6 py-6">
       {/* Top row — breadcrumb-style title + global controls */}
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <header
+        data-animate
+        className="mb-6 flex flex-wrap items-center justify-between gap-4"
+      >
         <div className="flex items-baseline gap-3">
           <h1 className="text-[22px] font-semibold tracking-tight text-[var(--color-text)]">
             Cockpit
@@ -188,7 +193,7 @@ export default function CockpitPage() {
         {/* Right column */}
         <div className="min-w-0 space-y-6">
           <section>
-            <div className="mb-4 flex items-center justify-between">
+            <div data-animate className="mb-4 flex items-center justify-between">
               <h2 className="text-[13px] font-medium uppercase tracking-[0.8px] text-[var(--color-text-muted)]">
                 Active Audits
               </h2>
@@ -214,7 +219,7 @@ export default function CockpitPage() {
 
           {continuous && (
             <section>
-              <div className="mb-4 flex items-center justify-between">
+              <div data-animate className="mb-4 flex items-center justify-between">
                 <h2 className="text-[13px] font-medium uppercase tracking-[0.8px] text-[var(--color-text-muted)]">
                   Live Feed
                 </h2>

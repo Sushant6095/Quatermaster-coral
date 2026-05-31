@@ -33,21 +33,19 @@ export function LandingCTA() {
     if (!visible) return;
     let cancelled = false;
 
-    async function animate() {
-      const animeModule = await import("animejs");
-      const anime = animeModule.default;
+    async function runAnim() {
+      const { animate } = await import("animejs");
       if (cancelled || !headlineRef.current) return;
 
-      anime({
-        targets: headlineRef.current,
+      animate(headlineRef.current, {
         opacity: [0, 1],
         translateY: [24, 0],
-        easing: "easeOutExpo",
+        ease: "outExpo",
         duration: 900,
       });
     }
 
-    animate();
+    runAnim();
     return () => {
       cancelled = true;
     };

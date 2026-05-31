@@ -274,21 +274,19 @@ function FeatureRow({ feature, index }: FeatureRowProps) {
     if (!visible) return;
     let cancelled = false;
 
-    async function animate() {
-      const animeModule = await import("animejs");
-      const anime = animeModule.default;
-      if (cancelled) return;
+    async function runAnim() {
+      const { animate } = await import("animejs");
+      if (cancelled || !rowRef.current) return;
 
-      anime({
-        targets: rowRef.current,
+      animate(rowRef.current, {
         opacity: [0, 1],
         translateX: [isEven ? -40 : 40, 0],
-        easing: "easeOutExpo",
+        ease: "outExpo",
         duration: 900,
       });
     }
 
-    animate();
+    runAnim();
     return () => {
       cancelled = true;
     };
