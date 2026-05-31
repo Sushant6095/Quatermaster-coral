@@ -4,6 +4,7 @@ import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
+import { useWorkspace } from "@/components/workspace/WorkspaceProvider";
 import { FindingSlideOver } from "@/components/finding-detail/FindingSlideOver";
 import { BlastRadiusModal } from "@/components/finding-detail/BlastRadiusModal";
 import { SQLPanel } from "@/components/audit-run/SQLPanel";
@@ -35,6 +36,7 @@ function findFindingById(id: string): Finding {
 export default function FindingDetailPage({ params }: FindingDetailPageProps) {
   const { id } = use(params);
   const router = useRouter();
+  const { data, patchData, active } = useWorkspace();
   const [blastOpen, setBlastOpen] = useState(false);
 
   const finding = findFindingById(id);
@@ -55,13 +57,23 @@ export default function FindingDetailPage({ params }: FindingDetailPageProps) {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       if (action === "resolve") {
+        patchData({
+          resolvedFindingIds: Array.from(
+            new Set([...data.resolvedFindingIds, finding.id])
+          ),
+        });
         toast.success("Finding marked resolved", {
-          description: "Removed from open findings and written to the audit trail.",
+          description: `Saved to ${active?.org ?? "your workspace"} · written to the audit trail.`,
         });
         router.push("/findings");
       } else {
+        patchData({
+          snoozedFindingIds: Array.from(
+            new Set([...data.snoozedFindingIds, finding.id])
+          ),
+        });
         toast("Snoozed for 7 days", {
-          description: "It will resurface in the live feed next week.",
+          description: `Saved to ${active?.org ?? "your workspace"} · resurfaces next week.`,
         });
       }
     } catch (err) {
@@ -84,6 +96,11 @@ export default function FindingDetailPage({ params }: FindingDetailPageProps) {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       if (action === "approve") {
+        patchData({
+          approvedRemediationIds: Array.from(
+            new Set([...data.approvedRemediationIds, remediationId])
+          ),
+        });
         toast.success("Remediation approved", {
           description: "Action sent · signed entry written to the Ledger.",
         });

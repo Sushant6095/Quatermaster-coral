@@ -33,6 +33,7 @@ import {
   mockLiveFeed,
 } from "@/lib/fixtures/cockpit";
 import { useTimelineReveal } from "@/lib/anime/useAnime";
+import { useWorkspace } from "@/components/workspace/WorkspaceProvider";
 import type { AuditId, Finding } from "@/lib/types";
 
 /** Lucide icon per audit — kept in one place so the grid stays declarative. */
@@ -49,7 +50,15 @@ const MAX_FEED_ITEMS = 50;
 export default function CockpitPage() {
   const router = useRouter();
   const revealRef = useTimelineReveal<HTMLDivElement>({ stagger: 70 });
-  const stats = mockCockpitStats;
+  const { data } = useWorkspace();
+  // Reflect the workspace's saved work: resolved findings drop the open count.
+  const stats = {
+    ...mockCockpitStats,
+    openFindings: Math.max(
+      0,
+      mockCockpitStats.openFindings - data.resolvedFindingIds.length
+    ),
+  };
   const [continuous, setContinuous] = useState<boolean>(true);
   const [liveFeed, setLiveFeed] = useState<Finding[]>(mockLiveFeed);
   const [runningAll, setRunningAll] = useState<boolean>(false);

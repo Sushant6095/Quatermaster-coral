@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Search, MessageSquare, ChevronDown } from "lucide-react";
+import { Search, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { ProfileMenu } from "./ProfileMenu";
 import { QMLogo } from "@/components/brand/QMLogo";
+import { WorkspaceSwitcher } from "@/components/workspace/WorkspaceSwitcher";
 
 interface SourcesHealth {
   ok: boolean;
@@ -67,19 +68,7 @@ export function TopBar() {
       </Link>
 
       {/* Workspace switcher */}
-      <button
-        type="button"
-        onClick={() => {
-          window.location.href = "/settings";
-        }}
-        className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-[13px] transition-colors hover:bg-[var(--color-card)]"
-      >
-        <span className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-sea)] text-[10px] font-bold text-white">
-          A
-        </span>
-        <span className="font-medium text-[var(--color-text)]">acme-corp</span>
-        <ChevronDown className="h-3.5 w-3.5 text-[var(--color-text-dim)]" />
-      </button>
+      <WorkspaceSwitcher />
 
       {/* ⌘K search — centered */}
       <div className="flex flex-1 justify-center">

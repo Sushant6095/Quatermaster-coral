@@ -13,21 +13,17 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Settings, Database, BookOpen, LogOut } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
-
-/** Demo identity for the single-tenant workspace. */
-const DEMO_USER = {
-  name: "Jordan Vale",
-  email: "jordan@acme-corp.io",
-  role: "Owner · acme-corp",
-} as const;
+import { useWorkspace } from "@/components/workspace/WorkspaceProvider";
 
 const REPO_URL = "https://github.com/Sushant6095/Quatermaster-coral";
 
 export function ProfileMenu() {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { active, signOut } = useWorkspace();
+  const router = useRouter();
 
   // Close on outside-click and Escape while open.
   useEffect(() => {
@@ -54,6 +50,8 @@ export function ProfileMenu() {
   }, [open]);
 
   const close = () => setOpen(false);
+
+  if (!active) return null;
 
   return (
     <div ref={containerRef} className="relative">
@@ -85,18 +83,18 @@ export function ProfileMenu() {
               <div className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-[var(--color-gold-deep)] to-[var(--color-coral-deep)]" />
               <div className="min-w-0">
                 <div className="truncate text-[13px] font-medium text-[var(--color-text)]">
-                  {DEMO_USER.name}
+                  {active.name}
                 </div>
                 <div className="truncate text-[11px] text-[var(--color-text-muted)]">
-                  {DEMO_USER.email}
+                  {active.email}
                 </div>
               </div>
             </div>
 
             {/* Workspace role */}
             <div className="border-b border-[var(--color-border)] px-3 py-2">
-              <span className="rounded-full border border-[var(--color-gold)]/30 px-2 py-0.5 text-[10px] uppercase tracking-wider text-[var(--color-gold)]">
-                {DEMO_USER.role}
+              <span className="rounded-full border border-[var(--color-accent)]/40 px-2 py-0.5 text-[10px] uppercase tracking-wider text-[var(--color-accent)]">
+                {active.isGuest ? "Guest" : "Owner"} · {active.org}
               </span>
             </div>
 
@@ -129,10 +127,8 @@ export function ProfileMenu() {
                 role="menuitem"
                 onClick={() => {
                   close();
-                  toast("Sign-out is disabled in the demo", {
-                    description:
-                      "Quartermaster runs locally — there's no account to leave.",
-                  });
+                  signOut();
+                  router.push("/welcome");
                 }}
                 className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-card-hover)] hover:text-[var(--color-coral)]"
               >
