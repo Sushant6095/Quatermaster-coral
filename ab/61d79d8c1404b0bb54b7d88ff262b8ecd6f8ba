@@ -1,0 +1,23 @@
+src/components/landing/oceanScene.ts
+  s_b5d5225ea8edd1::t_4ca6438f2e0f87 1-93
+public/models/README.md
+  s_b5d5225ea8edd1::t_06ab59c1757937 3-5,7,9,11-22
+src/components/landing/ShipModel.tsx
+  s_b5d5225ea8edd1::t_91c30b8f3a7bff 5,8-11,13-15,34-37,40-41,43,48,52-54,56,58-70,75-76,78-80,86,92-94,99,107-111,117-118,128-129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "ab61d79d8c1404b0bb54b7d88ff262b8ecd6f8ba",
+  "prompts": {},
+  "sessions": {
+    "s_b5d5225ea8edd1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0506d888-c5e7-41a5-9fd9-cefc9d660e80",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Sushant Jain <sushant.jain@vyapar.com>"
+    }
+  }
+}
