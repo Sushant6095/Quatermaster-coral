@@ -8,7 +8,7 @@ import { BrandLogo } from "@/components/brand/BrandLogo";
 import { QMLogo } from "@/components/brand/QMLogo";
 import { useAnimatablePointer } from "@/lib/anime/useAnime";
 
-// Procedural "constellation galleon" with GLB fallback — deferred, no SSR.
+// Constellation galleon (dark scene) with GLB fallback — deferred, no SSR.
 const ShipModel = dynamic(
   () => import("./ShipModel").then((m) => ({ default: m.ShipModel })),
   { ssr: false, loading: () => <ShipFallback /> }
@@ -17,15 +17,12 @@ const ShipModel = dynamic(
 function ShipFallback() {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <Anchor
-        className="h-20 w-20 animate-breath text-[var(--color-gold)]"
-        aria-hidden="true"
-      />
+      <Anchor className="h-20 w-20 animate-breath text-[var(--color-gold)]" aria-hidden="true" />
     </div>
   );
 }
 
-/** Sources federated by Coral — rendered with real brand logos (mono on dark). */
+/** Sources federated by Coral — real brand logos (full color on the light hero). */
 const SOURCE_LOGOS = ["deel", "okta", "github", "slack", "stripe", "linear"];
 
 const NAV_LINKS = [
@@ -37,7 +34,7 @@ const NAV_LINKS = [
 
 export function LandingHero() {
   const revealRef = useRef<HTMLDivElement>(null);
-  const shipRef = useAnimatablePointer<HTMLDivElement>(18);
+  const shipRef = useAnimatablePointer<HTMLDivElement>(14);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,24 +57,24 @@ export function LandingHero() {
 
   return (
     <section
-      className="relative flex min-h-screen flex-col overflow-hidden text-[var(--color-text)]"
+      className="lp-light relative flex min-h-screen flex-col overflow-hidden"
       aria-labelledby="hero-heading"
     >
-      {/* Deep navy sky */}
+      {/* Sky gradient */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            "radial-gradient(120% 90% at 65% 35%, #0b1c33 0%, #071124 45%, #03060f 100%)",
+            "linear-gradient(180deg, var(--lp-sky-top) 0%, var(--lp-sky-mid) 45%, var(--lp-sky-bottom) 100%)",
         }}
         aria-hidden="true"
       />
-      {/* Teal aura behind the ship */}
+      {/* Soft clouds */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            "radial-gradient(40% 45% at 72% 50%, rgba(91,210,199,0.12) 0%, transparent 70%), radial-gradient(30% 30% at 78% 38%, rgba(228,182,107,0.08) 0%, transparent 70%)",
+            "radial-gradient(60% 50% at 50% -10%, rgba(255,255,255,0.95) 0%, transparent 60%), radial-gradient(28% 30% at 78% 22%, rgba(255,255,255,0.85) 0%, transparent 70%), radial-gradient(34% 36% at 16% 30%, rgba(255,255,255,0.75) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
@@ -87,14 +84,10 @@ export function LandingHero() {
         <Link
           href="/"
           aria-label="Quartermaster home"
-          className="flex items-center gap-2.5"
+          className="flex items-center gap-2.5 text-[var(--lp-ink)]"
         >
-          <span className="text-[var(--color-gold)]">
-            <QMLogo size={22} />
-          </span>
-          <span className="font-bold tracking-tight text-[var(--color-text)]">
-            QUARTERMASTER
-          </span>
+          <QMLogo size={22} />
+          <span className="font-bold tracking-tight">QUARTERMASTER</span>
         </Link>
         <div className="flex items-center gap-6">
           <div className="hidden items-center gap-6 md:flex">
@@ -102,7 +95,7 @@ export function LandingHero() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+                className="text-sm font-medium text-[var(--lp-ink-soft)] transition-colors hover:text-[var(--lp-ink)]"
               >
                 {l.label}
               </Link>
@@ -111,7 +104,7 @@ export function LandingHero() {
               href="https://github.com/Sushant6095/Quatermaster-coral"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+              className="text-[var(--lp-ink-soft)] transition-colors hover:text-[var(--lp-ink)]"
               aria-label="GitHub repository"
             >
               <BrandLogo name="github" size={18} />
@@ -119,7 +112,7 @@ export function LandingHero() {
           </div>
           <Link
             href="/cockpit"
-            className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-gold)] px-4 py-2 text-sm font-semibold text-[var(--color-bg)] transition-colors hover:bg-[var(--color-gold-hover)]"
+            className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--lp-ink)] px-4 py-2 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
           >
             Enter Cockpit
             <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -136,20 +129,19 @@ export function LandingHero() {
         >
           <span
             data-reveal
-            className="mb-6 inline-flex w-fit items-center gap-2 rounded-[var(--radius-pill)] border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-[var(--color-text-muted)] backdrop-blur-sm"
+            className="mb-6 inline-flex w-fit items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--lp-border)] bg-[var(--lp-surface)]/70 px-3 py-1.5 text-xs font-medium text-[var(--lp-ink-soft)] backdrop-blur-sm"
             style={{ opacity: 0 }}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-sea)] animate-breath" aria-hidden="true" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--lp-sea)] animate-breath" aria-hidden="true" />
             Pirates of the Coral-bean · Track 1
           </span>
 
           <h1
             id="hero-heading"
-            className="mb-5 text-[clamp(2.8rem,6.5vw,5.5rem)] font-bold leading-[0.98] tracking-[-0.02em] text-[var(--color-text)]"
+            className="mb-5 text-[clamp(2.8rem,6.5vw,5.5rem)] font-bold leading-[0.98] tracking-[-0.02em] text-[var(--lp-ink)]"
           >
             <span data-reveal className="block" style={{ opacity: 0 }}>
-              Your{" "}
-              <span className="text-[var(--color-sea)]">federated</span>
+              Your federated
             </span>
             <span data-reveal className="block" style={{ opacity: 0 }}>
               SaaS auditor.
@@ -158,12 +150,12 @@ export function LandingHero() {
 
           <p
             data-reveal
-            className="mb-8 max-w-md text-[clamp(1rem,1.5vw,1.2rem)] leading-relaxed text-[var(--color-text-muted)]"
+            className="mb-8 max-w-md text-[clamp(1rem,1.5vw,1.2rem)] leading-relaxed text-[var(--lp-ink-soft)]"
             style={{ opacity: 0 }}
           >
             One SQL query across HRIS, Okta, GitHub, Slack &amp; Stripe — find
             zombie accounts, ghost seats, and shadow IT.{" "}
-            <span className="font-medium text-[var(--color-text)]">
+            <span className="font-medium text-[var(--lp-ink)]">
               No warehouse. PII never leaves.
             </span>
           </p>
@@ -171,7 +163,7 @@ export function LandingHero() {
           <div data-reveal className="flex flex-wrap gap-3" style={{ opacity: 0 }}>
             <Link
               href="/cockpit"
-              className="group flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-gold)] px-6 py-3 text-sm font-semibold text-[var(--color-bg)] transition-all hover:bg-[var(--color-gold-hover)] hover:shadow-[0_0_28px_rgba(228,182,107,0.35)]"
+              className="group flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--lp-ink)] px-6 py-3 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
             >
               Enter the Cockpit
               <ChevronRight
@@ -181,7 +173,7 @@ export function LandingHero() {
             </Link>
             <a
               href="#audits"
-              className="flex items-center gap-2 rounded-[var(--radius-md)] border border-white/15 px-6 py-3 text-sm font-medium text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-sea)]/50 hover:text-[var(--color-text)]"
+              className="flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--lp-border)] bg-[var(--lp-surface)]/60 px-6 py-3 text-sm font-medium text-[var(--lp-ink-soft)] backdrop-blur-sm transition-colors hover:text-[var(--lp-ink)]"
             >
               <Play className="h-3.5 w-3.5" aria-hidden="true" />
               Watch the demo
@@ -190,42 +182,40 @@ export function LandingHero() {
 
           {/* Source logo strip */}
           <div data-reveal className="mt-10 flex flex-col gap-3" style={{ opacity: 0 }}>
-            <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--color-text-dim)]">
+            <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--lp-ink-dim)]">
               Federates in one query
             </span>
-            <div className="flex flex-wrap items-center gap-4 text-[var(--color-text-muted)]">
+            <div className="flex flex-wrap items-center gap-4">
               {SOURCE_LOGOS.map((src) => (
                 <BrandLogo
                   key={src}
                   name={src}
-                  size={24}
+                  size={26}
+                  colored
                   title={src}
-                  className="opacity-70 transition-opacity hover:opacity-100"
+                  className="opacity-80 transition-opacity hover:opacity-100"
                 />
               ))}
             </div>
           </div>
         </div>
 
-        {/* Right: 3D constellation galleon */}
-        <div
-          ref={shipRef}
-          className="relative flex min-h-[420px] w-full flex-1 items-center justify-center md:min-h-screen md:w-auto"
-        >
-          <div className="absolute inset-0 z-0" aria-hidden="true">
-            <ShipModel />
+        {/* Right: dark ship panel (constellation galleon in its own dark scene) */}
+        <div className="flex w-full flex-1 items-center justify-center px-6 pb-10 md:w-auto md:px-10 md:pb-0">
+          <div
+            ref={shipRef}
+            className="relative h-[340px] w-full max-w-[560px] overflow-hidden rounded-3xl border border-white/10 shadow-[0_30px_80px_-30px_rgba(7,18,40,0.6)] md:h-[74vh]"
+            style={{
+              background:
+                "radial-gradient(120% 100% at 62% 40%, #0b1c33 0%, #06101f 55%, #03060f 100%)",
+            }}
+          >
+            <div className="absolute inset-0 z-0" aria-hidden="true">
+              <ShipModel />
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Fade into the sections below */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-32"
-        style={{
-          background: "linear-gradient(180deg, transparent 0%, var(--color-bg) 100%)",
-        }}
-        aria-hidden="true"
-      />
     </section>
   );
 }
