@@ -20,7 +20,7 @@ export interface LiveFeedProps {
 /** Severity badge class — semantic color fill only */
 const SEVERITY_TAG: Record<Severity, string> = {
   P0: "bg-[var(--color-coral)]/15 text-[var(--color-coral)]",
-  P1: "bg-[var(--color-gold)]/10 text-[var(--color-gold)]",
+  P1: "bg-[var(--color-warn)]/10 text-[var(--color-warn)]",
   P2: "bg-transparent text-[var(--color-text-dim)]",
 };
 
@@ -59,7 +59,7 @@ export function LiveFeed({ items, isLive }: LiveFeedProps) {
         <CompassRose />
         <p className="text-[13px] text-[var(--color-text-muted)]">
           All clear.{" "}
-          <span className="text-[var(--color-gold)]">Run an audit ↗</span>
+          <span className="text-[var(--color-accent)]">Run an audit ↗</span>
         </p>
       </div>
     );

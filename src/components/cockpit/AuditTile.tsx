@@ -27,18 +27,15 @@ export interface AuditTileProps extends AuditDefinition {
 /** Icon wrapper tint per category */
 const CATEGORY_ICON_TINT: Record<AuditCategory, string> = {
   Security: "text-[var(--color-coral)]",
-  Spend: "text-[var(--color-gold)]",
+  Spend: "text-[var(--color-accent)]",
   Compliance: "text-[var(--color-sea)]",
 };
 
-/** Category badge style per category */
+/** Category badge — neutral gray label, Vercel-style */
 const CATEGORY_BADGE: Record<AuditCategory, string> = {
-  Security:
-    "border-[var(--color-coral)]/30 text-[var(--color-coral)]",
-  Spend:
-    "border-[var(--color-gold)]/30 text-[var(--color-gold)]",
-  Compliance:
-    "border-[var(--color-sea)]/30 text-[var(--color-sea)]",
+  Security: "border-[var(--color-border)] text-[var(--color-text-muted)]",
+  Spend: "border-[var(--color-border)] text-[var(--color-text-muted)]",
+  Compliance: "border-[var(--color-border)] text-[var(--color-text-muted)]",
 };
 
 /** Source connector chips per audit */
@@ -134,7 +131,7 @@ export function AuditTile({
         </span>
         <Link
           href={`/audits/${id}`}
-          className="text-[13px] text-[var(--color-gold)] hover:underline"
+          className="text-[13px] text-[var(--color-accent)] hover:underline"
           onClick={(e) => e.stopPropagation()}
         >
           Run →

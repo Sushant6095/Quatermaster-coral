@@ -30,9 +30,15 @@
   --color-sea: #5BD2C7;
   --color-lime: #A8E063;
 
+  /* Vercel-neutral accent + warning (dashboard) */
+  --color-accent: #2E7DF6;
+  --color-accent-hover: #5B9BFF;
+  --color-warn: #F5A623;
+  --color-success: #4ED17F;
+
   /* Severity (semantic) */
-  --color-p0: #FF7A6B;
-  --color-p1: #E4B66B;
+  --color-p0: #FF6166;
+  --color-p1: #F5A623;
   --color-p2: #9AA7BD;
 
   /* Type */
@@ -70,6 +76,18 @@ html, body {
 * { border-color: var(--color-border); }
 
 /* ============================================================
+   Dashboard = no gold. Override the brand-gold tokens within the
+   app subtree only (AppShell adds .qm-dashboard) so primary buttons
+   render white and accents go neutral — Vercel-exact. The landing
+   keeps its gold via its own scope.
+   ============================================================ */
+.qm-dashboard {
+  --color-gold: #EDEDED;       /* primary buttons → white */
+  --color-gold-hover: #FFFFFF;
+  --color-gold-deep: #2E7DF6;  /* avatar/gradient stops → blue */
+}
+
+/* ============================================================
    Landing light theme (elizaos-style hero + footer).
    Scoped to .lp-light — the dashboard stays on the dark @theme.
    ============================================================ */
@@ -92,7 +110,7 @@ html, body {
 }
 
 /* Selection */
-::selection { background: rgba(228, 182, 107, 0.22); color: var(--color-text); }
+::selection { background: rgba(46, 125, 246, 0.30); color: var(--color-text); }
 
 /* Scrollbars */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -102,7 +120,7 @@ html, body {
 
 /* Focus ring */
 :focus-visible {
-  outline: 2px solid var(--color-gold);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 4px;
 }

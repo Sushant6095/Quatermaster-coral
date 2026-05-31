@@ -46,7 +46,7 @@ export function AlertsPanel({ continuous, onToggle }: AlertsPanelProps) {
           "mt-3 inline-flex w-full items-center justify-center rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors",
           continuous
             ? "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-card)] hover:text-[var(--color-text)]"
-            : "bg-[var(--color-gold)] text-[var(--color-bg)] hover:bg-[var(--color-gold-hover)]"
+            : "bg-[var(--color-text)] text-[var(--color-bg)] hover:opacity-90"
         )}
       >
         {continuous ? "Pause monitoring" : "Enable Continuous Mode"}

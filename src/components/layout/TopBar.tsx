@@ -61,7 +61,7 @@ export function TopBar() {
       <Link
         href="/"
         aria-label="Quartermaster home"
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--color-gold)] transition-colors hover:bg-[var(--color-card)]"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--color-text)] transition-colors hover:bg-[var(--color-card)]"
       >
         <QMLogo size={20} />
       </Link>
@@ -74,7 +74,7 @@ export function TopBar() {
         }}
         className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-[13px] transition-colors hover:bg-[var(--color-card)]"
       >
-        <span className="flex h-5 w-5 items-center justify-center rounded bg-[var(--color-gold)] text-[10px] font-bold text-[var(--color-bg)]">
+        <span className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-sea)] text-[10px] font-bold text-white">
           A
         </span>
         <span className="font-medium text-[var(--color-text)]">acme-corp</span>
@@ -112,7 +112,7 @@ export function TopBar() {
             continuous && !sourceDegraded
               ? "border-[var(--color-lime)]/30 bg-[var(--color-lime)]/10 text-[var(--color-lime)]"
               : continuous && sourceDegraded
-                ? "border-[var(--color-gold)]/30 bg-[var(--color-gold)]/10 text-[var(--color-gold)]"
+                ? "border-[var(--color-warn)]/30 bg-[var(--color-warn)]/10 text-[var(--color-warn)]"
                 : "border-[var(--color-border)] bg-transparent text-[var(--color-text-dim)] hover:bg-[var(--color-card)]"
           )}
           title="Toggle Continuous Mode"
@@ -123,7 +123,7 @@ export function TopBar() {
               continuous && !sourceDegraded
                 ? "animate-breath bg-[var(--color-lime)]"
                 : continuous && sourceDegraded
-                  ? "bg-[var(--color-gold)]"
+                  ? "bg-[var(--color-warn)]"
                   : "bg-[var(--color-text-dim)]"
             )}
           />

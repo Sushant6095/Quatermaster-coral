@@ -165,7 +165,7 @@ export default function CockpitPage() {
             type="button"
             onClick={runAllAudits}
             disabled={runningAll}
-            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-gold)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-bg)] transition-colors hover:bg-[var(--color-gold-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-text)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-bg)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <PlayCircle className="h-3.5 w-3.5" />
             {runningAll ? "Running…" : "Run All"}
@@ -194,7 +194,7 @@ export default function CockpitPage() {
               </h2>
               <a
                 href="/audits"
-                className="text-[12px] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-gold)]"
+                className="text-[12px] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
               >
                 View all →
               </a>

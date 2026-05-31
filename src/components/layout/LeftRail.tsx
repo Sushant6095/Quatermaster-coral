@@ -70,11 +70,11 @@ export function LeftRail() {
         aria-label="Quartermaster home"
         className="group flex select-none items-center gap-2.5 px-4 py-5"
       >
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-gold)]/15 text-[var(--color-gold)] transition-transform group-hover:scale-105">
+        <div className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-text)] transition-colors group-hover:border-[var(--color-border-strong)]">
           <QMLogo size={18} />
         </div>
         <div>
-          <div className="text-[14px] font-semibold leading-tight text-[var(--color-gold)]">
+          <div className="text-[14px] font-semibold leading-tight text-[var(--color-text)]">
             Quartermaster
           </div>
           <div className="text-[11px] text-[var(--color-text-dim)]">

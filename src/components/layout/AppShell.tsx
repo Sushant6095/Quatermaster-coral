@@ -17,7 +17,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="qm-dashboard flex min-h-screen">
       <LeftRail />
       <div className="flex flex-1 flex-col">
         <TopBar />
