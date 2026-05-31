@@ -30,6 +30,7 @@ export function ShipModel() {
     let cleanupFn: (() => void) | undefined;
 
     void (async () => {
+     try {
       const THREE = await import("three");
       const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
       const { DRACOLoader } = await import("three/examples/jsm/loaders/DRACOLoader.js");
@@ -133,6 +134,10 @@ export function ShipModel() {
           el.removeChild(renderer.domElement);
         }
       };
+     } catch {
+       // Any loader/setup failure → procedural fallback, never a blank hero.
+       if (!disposed) setFailed(true);
+     }
     })();
 
     return () => {
