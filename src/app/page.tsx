@@ -3,6 +3,7 @@ import { LandingStats } from "@/components/landing/LandingStats";
 import { LandingAudits } from "@/components/landing/LandingAudits";
 import { LandingFederation } from "@/components/landing/LandingFederation";
 import { LandingDifferentiators } from "@/components/landing/LandingDifferentiators";
+import { LandingFeatures } from "@/components/landing/LandingFeatures";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo";
@@ -29,6 +30,7 @@ export default function LandingPage() {
       />
       <LandingHero />
       <LandingStats />
+      <LandingFeatures />
       <LandingAudits />
       <LandingFederation />
       <LandingDifferentiators />
