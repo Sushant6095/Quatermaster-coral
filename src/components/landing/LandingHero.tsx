@@ -200,19 +200,13 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* Right: dark ship panel (constellation galleon in its own dark scene) */}
-        <div className="flex w-full flex-1 items-center justify-center px-6 pb-10 md:w-auto md:px-10 md:pb-0">
-          <div
-            ref={shipRef}
-            className="relative h-[340px] w-full max-w-[560px] overflow-hidden rounded-3xl border border-white/10 shadow-[0_30px_80px_-30px_rgba(7,18,40,0.6)] md:h-[74vh]"
-            style={{
-              background:
-                "radial-gradient(120% 100% at 62% 40%, #0b1c33 0%, #06101f 55%, #03060f 100%)",
-            }}
-          >
-            <div className="absolute inset-0 z-0" aria-hidden="true">
-              <ShipModel />
-            </div>
+        {/* Right: 3D ship, directly on the sky (no panel) */}
+        <div
+          ref={shipRef}
+          className="relative flex min-h-[420px] w-full flex-1 items-center justify-center md:min-h-screen md:w-auto"
+        >
+          <div className="absolute inset-0 z-0" aria-hidden="true">
+            <ShipModel />
           </div>
         </div>
       </div>
